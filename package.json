@@ -1,0 +1,19 @@
+{
+    "name": "blockure",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.ts",
+    "scripts": {
+        "start": "ts-node backend/src/server.ts",
+        "server": "npx nodemon backend/src/server.ts",
+        "client": "npm run dev --prefix frontend",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "concurrently": "^8.2.2",
+        "nodemon": "^3.1.0",
+        "ts-node": "^10.9.2"
+    }
+}
