@@ -8,6 +8,7 @@
         "typescript": "^5.4.3"
     },
     "dependencies": {
+        "@openzeppelin/contracts": "^5.0.2",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "express": "^4.19.2"
