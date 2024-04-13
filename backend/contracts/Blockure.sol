@@ -20,6 +20,7 @@ contract MyToken is ERC721, ERC721URIStorage, Ownable {
         _setTokenURI(tokenId, uri);
     }
 
+    // _beforeTokenTransfer method is a hook that is called before any token transfer
     function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
     internal
     override
