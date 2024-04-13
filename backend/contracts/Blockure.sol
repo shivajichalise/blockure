@@ -20,6 +20,14 @@ contract MyToken is ERC721, ERC721URIStorage, Ownable {
         _setTokenURI(tokenId, uri);
     }
 
+    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
+    internal
+    override
+    virtual {
+        require(from == address(0), "Err: BK Token transfer is BLOCKED");   
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
     // The following functions are overrides required by Solidity.
 
     function tokenURI(uint256 tokenId)
