@@ -6,6 +6,6 @@ const router = express.Router()
 
 router.get("/", test)
 
-router.post("/", handleUpload.single("certificate"), create)
+router.post("/", handleUpload.single("image"), create)
 
 export default router
