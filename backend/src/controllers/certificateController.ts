@@ -7,7 +7,15 @@ export function test(_: Request, res: Response) {
 export function create(req: Request, res: Response) {
     const certificate = req.file
     const { fields } = req.body
+    const certificateFields = JSON.parse(fields)
 
-    res.send(`/${req.file!.path.split("/")[1]}/${req.file!.path.split("/")[2]}`)
+    if (!certificate) {
+        return res
+            .status(400)
+            .json({ message: "Please provide valid certificate image." })
+    }
+
+    const uploaded = certificate.path.split("/")[1]
+
     return res.status(200).json({ message: "Certificates!" })
 }

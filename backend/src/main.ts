@@ -2,6 +2,9 @@ import express from "express"
 import cors from "cors"
 import "dotenv/config"
 import certificateRoutes from "./routes/certificateRoutes"
+import connectDB from "./config/db"
+
+connectDB()
 
 const app = express()
 app.use(express.json())
