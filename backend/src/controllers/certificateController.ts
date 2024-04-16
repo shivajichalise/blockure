@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import Certificate from "../models/Certificate"
+import { validationResult } from "express-validator"
 
 export function test(_: Request, res: Response) {
     return res.status(200).json({ message: "Certificates!" })
@@ -36,4 +37,20 @@ export async function create(req: Request, res: Response) {
         res.status(400)
         throw new Error("Invalid certificate data!")
     }
+}
+
+export async function issue(req: Request, res: Response) {
+    const result = validationResult(req)
+
+    if (!result.isEmpty()) {
+        return res.send({ errors: result.array() })
+    }
+
+    const { fields } = req.body
+
+    console.log(fields)
+
+    return res.status(200).json({
+        message: "Issued",
+    })
 }
