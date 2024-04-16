@@ -135,6 +135,14 @@ router.post(
                 return true
             }),
     ],
+    [
+        body("certificate")
+            .trim()
+            .notEmpty()
+            .withMessage("Certificate is required!")
+            .isMongoId()
+            .withMessage("Certificate value should be a valid mongo id!"),
+    ],
     issue
 )
 
