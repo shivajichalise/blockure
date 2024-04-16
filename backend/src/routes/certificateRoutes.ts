@@ -11,6 +11,7 @@ router.post("/", handleUpload.single("image"), create)
 
 router.post(
     "/issue",
+    handleUpload.single("certificate"),
     [
         body("fields").custom((value) => {
             if (Object.keys(value).length === 0) {
@@ -137,11 +138,17 @@ router.post(
     ],
     [
         body("certificate")
-            .trim()
-            .notEmpty()
-            .withMessage("Certificate is required!")
-            .isMongoId()
-            .withMessage("Certificate value should be a valid mongo id!"),
+            .custom((_value, { req }) => {
+                const file = req.file
+                const fileTypes = /jpg|jpeg|png/
+                const mimeType = fileTypes.test(file.mimetype)
+                if (!mimeType) {
+                    throw new Error("Not a valid image!")
+                } else {
+                    return true
+                }
+            })
+            .withMessage("Certificate image is required!"),
     ],
     issue
 )
