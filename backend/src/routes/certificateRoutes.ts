@@ -72,68 +72,18 @@ router.post(
             }),
     ],
     [
-        body("fields.*.color").custom((value) => {
-            const requiredProperties = ["red", "green", "blue"]
-            const missingProperties = requiredProperties.filter(
-                (prop) => !(prop in value)
-            )
-            if (missingProperties.length > 0) {
-                throw new Error(
-                    `Missing properties: ${missingProperties.join(", ")}`
-                )
-            }
-            return true
-        }),
-    ],
-    [
-        body("fields.*.color.red")
+        body("fields.*.color")
             .trim()
             .notEmpty()
-            .withMessage("Red value is required!")
-            .isNumeric()
-            .withMessage("Red value be numeric!")
+            .withMessage("Color field is required!")
             .custom((value) => {
-                const val = parseInt(value)
-                if (val < 0 || val > 255) {
-                    throw new Error(
-                        "Value for red should be between 0 and 255!"
-                    )
+                let regex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+
+                if (regex.test(value) === true) {
+                    return "true"
+                } else {
+                    throw new Error("Not a valid Hex color code!")
                 }
-                return true
-            }),
-    ],
-    [
-        body("fields.*.color.green")
-            .trim()
-            .notEmpty()
-            .withMessage("Green value is required!")
-            .isNumeric()
-            .withMessage("Green value be numeric!")
-            .custom((value) => {
-                const val = parseInt(value)
-                if (val < 0 || val > 255) {
-                    throw new Error(
-                        "Value for green should be between 0 and 255!"
-                    )
-                }
-                return true
-            }),
-    ],
-    [
-        body("fields.*.color.blue")
-            .trim()
-            .notEmpty()
-            .withMessage("Blue value is required!")
-            .isNumeric()
-            .withMessage("Blue value be numeric!")
-            .custom((value) => {
-                const val = parseInt(value)
-                if (val < 0 || val > 255) {
-                    throw new Error(
-                        "Value for blue should be between 0 and 255!"
-                    )
-                }
-                return true
             }),
     ],
     [

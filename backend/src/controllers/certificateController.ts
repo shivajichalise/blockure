@@ -22,10 +22,6 @@ interface Fields {
     [fieldName: string]: Field
 }
 
-interface Data {
-    fields: Fields
-}
-
 export function test(_: Request, res: Response) {
     return res.status(200).json({ message: "Certificates!" })
 }
@@ -85,12 +81,34 @@ export async function issue(req: Request, res: Response) {
     return await generate(image, fields, res)
 }
 
-async function generate(image: string, fields: Data, res: Response) {
+async function generate(image: string, fields: Fields, res: Response) {
     const imagePath = path.join("uploads/", image)
     const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
     const img = await Jimp.read(imagePath)
 
-    img.print(font, 10, 10, "NFT!")
+    for (const field in fields) {
+        const { value, x, y, angle, color } = fields[field]
+
+        const xInt = typeof x === "string" ? parseInt(x, 10) : x
+        const yInt = typeof y === "string" ? parseInt(y, 10) : y
+        const angleInt = typeof angle === "string" ? parseInt(angle, 10) : angle
+
+        let textImage = await Jimp.create(300, 300, 0x0)
+
+        textImage.print(font, 0, 0, value)
+        textImage.color([
+            // @ts-ignore
+            { apply: "xor", params: [color] },
+        ])
+
+        if (angleInt !== 0) {
+            textImage.rotate(angleInt)
+            img.blit(textImage, 0, 0)
+        } else {
+            img.blit(textImage, xInt, yInt)
+        }
+    }
+
     await img
         .writeAsync("uploads/output.png")
         .then((success) => {
@@ -100,6 +118,6 @@ async function generate(image: string, fields: Data, res: Response) {
         .catch((err) => {
             return res
                 .status(500)
-                .json({ message: "Certificate generation failed!" })
+                .json({ message: "Certificate generation failed!", error: err })
         })
 }
