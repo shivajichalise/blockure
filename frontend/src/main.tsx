@@ -4,6 +4,7 @@ import { ConfigProvider, theme } from "antd"
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import Home from "./pages/Home.tsx"
 import Login from "./pages/Login/Login.tsx"
+import GuestPage from "./pages/GuestPage.tsx"
 import AuthContext from "./contexts/AuthContext.tsx"
 import ProtectedRoute from "./utils/ProtectRoute.tsx"
 import Register from "./pages/Register.tsx"
@@ -19,12 +20,18 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/register",
-        element: <Register />,
+        path: "/",
+        element: <GuestPage />,
+        children: [
+            {
+                path: "/login",
+                element: <Login />,
+            },
+            {
+                path: "/register",
+                element: <Register />,
+            },
+        ],
     },
 ])
 

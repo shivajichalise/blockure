@@ -2,17 +2,44 @@ import { Button, Flex, Form, Input, Typography, Image, Space } from "antd"
 import { MailOutlined } from "@ant-design/icons"
 import image from "../../assets/login_screen_image.png"
 import logo from "../../assets/logo.png"
-import React from "react"
+import { useState, useEffect, FC } from "react"
 import "./styles.css"
 const { Text, Link } = Typography
+import axiosClient from "../../axios-client"
+import { useAuth } from "../../contexts/AuthContext"
 
-const Login: React.FC = () => {
-    const [passwordVisible, setPasswordVisible] = React.useState(false)
-    const [titleSize, setTitleSize] = React.useState<
-        2 | 5 | 1 | 3 | 4 | undefined
-    >(2)
+const Login: FC = () => {
+    const [passwordVisible, setPasswordVisible] = useState(false)
+    const [titleSize, setTitleSize] = useState<2 | 5 | 1 | 3 | 4 | undefined>(2)
+    const { setUser, setToken } = useAuth()
 
-    React.useEffect(() => {
+    const submitForm = (values: any) => {
+        const { email, password } = values
+
+        const payload = {
+            email,
+            password,
+        }
+
+        axiosClient
+            .post("/auth/login", payload)
+            .then(({ data }) => {
+                const userId = data._id
+                const token = data.token
+
+                setUser(userId)
+                setToken(token)
+            })
+            .catch((err) => {
+                const response = err.response
+                if (response && response.status === 403) {
+                    console.log(response.data.data)
+                    console.log(response.data.message)
+                }
+            })
+    }
+
+    useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 600) {
                 setTitleSize(4)
@@ -21,10 +48,8 @@ const Login: React.FC = () => {
             }
         }
 
-        // Call handleResize initially to set the initial title size based on the window width
         handleResize()
 
-        // Add event listener for window resize
         window.addEventListener("resize", handleResize)
 
         // Clean up the event listener when the component unmounts
@@ -56,6 +81,7 @@ const Login: React.FC = () => {
                         className="login-form"
                         initialValues={{ remember: true }}
                         size="large"
+                        onFinish={submitForm}
                     >
                         <Flex
                             justify="center"
@@ -78,7 +104,7 @@ const Login: React.FC = () => {
                             </Typography.Title>
                         </Form.Item>
                         <Form.Item
-                            name="username"
+                            name="email"
                             rules={[
                                 {
                                     required: true,

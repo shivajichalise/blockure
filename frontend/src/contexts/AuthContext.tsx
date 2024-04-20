@@ -1,7 +1,29 @@
-import { createContext, PropsWithChildren, useContext, useState } from "react"
+import {
+    Dispatch,
+    SetStateAction,
+    createContext,
+    PropsWithChildren,
+    useContext,
+    useState,
+} from "react"
+
 import User from "../types/User"
 
-const AuthContext = createContext<User | null>(null)
+type ContextData = {
+    user: User | null
+    token: string | null
+    setUser: Dispatch<SetStateAction<User | null>>
+    setToken: (token: string | null) => void
+}
+
+const initialState: ContextData = {
+    user: null,
+    token: null,
+    setUser: () => {},
+    setToken: () => {},
+}
+
+const AuthContext = createContext(initialState)
 
 type AuthProviderProps = PropsWithChildren & {
     isSignedIn?: boolean
@@ -12,9 +34,24 @@ export default function AuthProvider({
     isSignedIn,
 }: AuthProviderProps) {
     // Uses `isSignedIn` prop to determine whether or not to render a user
-    const [user] = useState<User | null>(isSignedIn ? { id: 1 } : null)
+    const [user, setUser] = useState<User | null>(isSignedIn ? { id: 1 } : null)
+    const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN"))
 
-    return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+    function setToken(token: string | null) {
+        _setToken(token)
+
+        if (token) {
+            localStorage.setItem("ACCESS_TOKEN", token)
+        } else {
+            localStorage.removeItem("ACCESS_TOKEN")
+        }
+    }
+
+    return (
+        <AuthContext.Provider value={{ user, token, setUser, setToken }}>
+            {children}
+        </AuthContext.Provider>
+    )
 }
 
 export const useAuth = () => {
