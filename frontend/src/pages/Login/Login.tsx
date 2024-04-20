@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, Typography, Image, Space } from "antd"
+import { Button, Flex, Form, Input, Typography, Image, Space, Spin } from "antd"
 import { MailOutlined } from "@ant-design/icons"
 import image from "../../assets/login_screen_image.png"
 import logo from "../../assets/logo.png"
@@ -10,12 +10,17 @@ import { useAuth } from "../../contexts/AuthContext"
 
 const Login: FC = () => {
     const [form] = Form.useForm()
-    const [passwordVisible, setPasswordVisible] = useState(false)
+    const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
     const [titleSize, setTitleSize] = useState<2 | 5 | 1 | 3 | 4 | undefined>(2)
     const { setUser, setToken } = useAuth()
-    const [loginError, setLoginError] = useState("Invalid email or password!")
+    const [loginError, setLoginError] = useState<string>(
+        "Invalid email or password!"
+    )
+    const [spinning, setSpinning] = useState<boolean>(false)
 
     const submitForm = (values: any) => {
+        setSpinning(true)
+
         const { email, password } = values
 
         const payload = {
@@ -31,6 +36,8 @@ const Login: FC = () => {
 
                 setUser(userId)
                 setToken(token)
+
+                setSpinning(false)
             })
             .catch((err) => {
                 const response = err.response
@@ -48,6 +55,7 @@ const Login: FC = () => {
                             errors: [],
                         },
                     ])
+                    setSpinning(false)
                 }
             })
     }
@@ -73,6 +81,7 @@ const Login: FC = () => {
 
     return (
         <Flex justify="center" align="center" id="container">
+            <Spin spinning={spinning} fullscreen />
             <Flex
                 justify="space-evenly"
                 align="center"
@@ -179,7 +188,7 @@ const Login: FC = () => {
                         >
                             <Space direction="horizontal">
                                 <Text>No account?</Text>
-                                <Link>Create one</Link>
+                                <Link href="/register">Create one</Link>
                             </Space>
                         </Form.Item>
                     </Form>
