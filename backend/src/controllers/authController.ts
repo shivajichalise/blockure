@@ -27,7 +27,7 @@ export async function register(req: Request, res: Response) {
             token: generateToken(user._id.toString()),
         })
     } else {
-        res.status(400)
+        res.status(400).json({ messgae: "Invalid user data" })
         throw new Error("Invalid User data")
     }
 }
@@ -49,7 +49,9 @@ export async function login(req: Request, res: Response) {
             token: generateToken(user._id.toString()),
         })
     } else {
-        res.status(401)
+        res.status(401).json({
+            message: "Invalid email or password",
+        })
         throw new Error("Invalid email or password")
     }
 }
