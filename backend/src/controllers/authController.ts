@@ -12,8 +12,7 @@ export async function register(req: Request, res: Response) {
     const userExists = await User.findOne({ email })
 
     if (userExists) {
-        res.status(400)
-        throw new Error("User already exists")
+        return res.status(400).json({ message: "User already exists." })
     }
 
     const user = await User.create({ name, email, password })
@@ -27,8 +26,7 @@ export async function register(req: Request, res: Response) {
             token: generateToken(user._id.toString()),
         })
     } else {
-        res.status(400).json({ messgae: "Invalid user data" })
-        throw new Error("Invalid User data")
+        return res.status(400).json({ messgae: "Invalid user data." })
     }
 }
 
@@ -49,9 +47,8 @@ export async function login(req: Request, res: Response) {
             token: generateToken(user._id.toString()),
         })
     } else {
-        res.status(401).json({
-            message: "Invalid email or password",
+        return res.status(401).json({
+            message: "Invalid email or password.",
         })
-        throw new Error("Invalid email or password")
     }
 }

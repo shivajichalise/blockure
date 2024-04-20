@@ -9,9 +9,11 @@ import axiosClient from "../../axios-client"
 import { useAuth } from "../../contexts/AuthContext"
 
 const Login: FC = () => {
+    const [form] = Form.useForm()
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [titleSize, setTitleSize] = useState<2 | 5 | 1 | 3 | 4 | undefined>(2)
     const { setUser, setToken } = useAuth()
+    const [loginError, setLoginError] = useState("Invalid email or password!")
 
     const submitForm = (values: any) => {
         const { email, password } = values
@@ -32,9 +34,20 @@ const Login: FC = () => {
             })
             .catch((err) => {
                 const response = err.response
-                if (response && response.status === 403) {
-                    console.log(response.data.data)
-                    console.log(response.data.message)
+                if (response && response.status === 401) {
+                    setLoginError(response.data.message)
+                    form.setFields([
+                        {
+                            name: "email",
+                            value: values.email,
+                            errors: [loginError],
+                        },
+                        {
+                            name: "password",
+                            value: "",
+                            errors: [],
+                        },
+                    ])
                 }
             })
     }
@@ -77,6 +90,7 @@ const Login: FC = () => {
                     }}
                 >
                     <Form
+                        form={form}
                         name="normal_login"
                         className="login-form"
                         initialValues={{ remember: true }}
@@ -124,7 +138,7 @@ const Login: FC = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your Password!",
+                                    message: "Password field is required!",
                                 },
                             ]}
                         >
