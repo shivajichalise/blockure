@@ -9,6 +9,7 @@ import AuthContext from "./contexts/AuthContext.tsx"
 import ProtectedRoute from "./utils/ProtectRoute.tsx"
 import Register from "./pages/Register.tsx"
 import "./index.css"
+import font from "./fonts/Mona-Sans.ttf"
 
 const router = createBrowserRouter([
     {
@@ -52,6 +53,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                         colorError: "#ff6061",
                         colorWarning: "#ffbf3f",
                         fontSize: 14,
+                        fontFamily: font,
                     },
                     algorithm: theme.darkAlgorithm,
                 }}

@@ -1,5 +1,11 @@
+@font-face {
+    font-family: 'Mona-Sans';
+    src: url('./fonts/Mona-Sans.ttf') format('truetype');
+}
+
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+    font-family: 'Mona-Sans', sans-serif;
 
     color-scheme: light dark;
     background-color: #141414;
