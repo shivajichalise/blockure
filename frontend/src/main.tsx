@@ -3,10 +3,11 @@ import ReactDOM from "react-dom/client"
 import { ConfigProvider, theme } from "antd"
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import Home from "./pages/Home.tsx"
-import Login from "./pages/Login.tsx"
+import Login from "./pages/Login/Login.tsx"
 import AuthContext from "./contexts/AuthContext.tsx"
 import ProtectedRoute from "./utils/ProtectRoute.tsx"
 import Register from "./pages/Register.tsx"
+import "./index.css"
 
 const router = createBrowserRouter([
     {
