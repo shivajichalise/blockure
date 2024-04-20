@@ -1,7 +1,15 @@
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 
-const userSchema = new mongoose.Schema(
+interface UserDocument extends Document {
+    name: string
+    email: string
+    password: string
+    isAdmin: boolean
+    matchPassword: (pw: string) => Promise<boolean>
+}
+
+const userSchema = new mongoose.Schema<UserDocument>(
     {
         name: {
             type: String,

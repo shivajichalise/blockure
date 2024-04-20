@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import "dotenv/config"
 import certificateRoutes from "./routes/certificateRoutes"
+import authRoutes from "./routes/authRoutes"
 import connectDB from "./config/db"
 
 // connectDB()
@@ -22,5 +23,6 @@ app.get("/api", (_, res) => {
 })
 
 app.use("/api/certificates", certificateRoutes)
+app.use("/api/auth", authRoutes)
 
 export default app
