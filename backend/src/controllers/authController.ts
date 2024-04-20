@@ -9,9 +9,6 @@ import generateToken from "../utils/generateToken"
 export async function register(req: Request, res: Response) {
     const { name, email, password } = req.body
 
-    console.log(name)
-    return res.json({ name })
-
     const userExists = await User.findOne({ email })
 
     if (userExists) {
