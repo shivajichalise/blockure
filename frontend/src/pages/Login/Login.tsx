@@ -31,10 +31,10 @@ const Login: FC = () => {
         axiosClient
             .post("/auth/login", payload)
             .then(({ data }) => {
-                const userId = data._id
-                const token = data.token
+                const user = data.data.user
+                const token = data.data.token
 
-                setUser(userId)
+                setUser(JSON.stringify(user))
                 setToken(token)
 
                 setSpinning(false)

@@ -1,8 +1,7 @@
-import { useState, FC } from "react"
+import { useState, FC, MouseEventHandler, useEffect } from "react"
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    UploadOutlined,
     UserOutlined,
     SafetyCertificateOutlined,
 } from "@ant-design/icons"
@@ -19,6 +18,7 @@ import {
 } from "antd"
 import logo from "../assets/long-logo.png"
 import { DownOutlined } from "@ant-design/icons"
+import { useAuth } from "../contexts/AuthContext"
 
 const { Header, Sider, Content } = Layout
 
@@ -28,21 +28,23 @@ const Home: FC = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken()
 
+    const { user, setUser, setToken } = useAuth()
+
+    const handleLogout: MouseEventHandler<HTMLAnchorElement> = (e) => {
+        e.preventDefault()
+        setUser(null)
+        setToken(null)
+        window.location.href = "/login"
+    }
+
     const items: MenuProps["items"] = [
         {
-            label: <a href="https://www.antgroup.com">1st menu item</a>,
+            label: (
+                <a href="/logout" onClick={handleLogout}>
+                    Logout
+                </a>
+            ),
             key: "0",
-        },
-        {
-            label: <a href="https://www.aliyun.com">2nd menu item</a>,
-            key: "1",
-        },
-        {
-            type: "divider",
-        },
-        {
-            label: "3rd menu item",
-            key: "3",
         },
     ]
 
@@ -105,13 +107,19 @@ const Home: FC = () => {
                             />
                         </Flex>
                         <Flex>
-                            <Dropdown menu={{ items }} trigger={["click"]}>
+                            <Dropdown
+                                menu={{ items }}
+                                trigger={["click"]}
+                                align={{ offset: [0, -10] }}
+                            >
                                 <a
                                     onClick={(e) => e.preventDefault()}
                                     style={{ color: "#ffffff" }}
                                 >
                                     <Space>
-                                        Click me
+                                        {user !== null
+                                            ? JSON.parse(user).name
+                                            : ""}
                                         <DownOutlined />
                                     </Space>
                                 </a>
@@ -127,9 +135,7 @@ const Home: FC = () => {
                         background: colorBgContainer,
                         borderRadius: borderRadiusLG,
                     }}
-                >
-                    Content
-                </Content>
+                ></Content>
             </Layout>
         </Layout>
     )

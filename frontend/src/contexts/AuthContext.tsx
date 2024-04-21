@@ -1,18 +1,9 @@
-import {
-    Dispatch,
-    SetStateAction,
-    createContext,
-    PropsWithChildren,
-    useContext,
-    useState,
-} from "react"
-
-import User from "../types/User"
+import { createContext, PropsWithChildren, useContext, useState } from "react"
 
 type ContextData = {
-    user: User | null
+    user: string | null
     token: string | null
-    setUser: Dispatch<SetStateAction<User | null>>
+    setUser: (user: string | null) => void
     setToken: (token: string | null) => void
 }
 
@@ -29,12 +20,10 @@ type AuthProviderProps = PropsWithChildren & {
     isSignedIn?: boolean
 }
 
-export default function AuthProvider({
-    children,
-    isSignedIn,
-}: AuthProviderProps) {
-    // Uses `isSignedIn` prop to determine whether or not to render a user
-    const [user, setUser] = useState<User | null>(isSignedIn ? { id: 1 } : null)
+export default function AuthProvider({ children }: AuthProviderProps) {
+    const [user, _setUser] = useState<string | null>(
+        localStorage.getItem("USER")
+    )
     const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN"))
 
     function setToken(token: string | null) {
@@ -44,6 +33,16 @@ export default function AuthProvider({
             localStorage.setItem("ACCESS_TOKEN", token)
         } else {
             localStorage.removeItem("ACCESS_TOKEN")
+        }
+    }
+
+    function setUser(user: string | null) {
+        _setUser(token)
+
+        if (user) {
+            localStorage.setItem("USER", user)
+        } else {
+            localStorage.removeItem("USER")
         }
     }
 
