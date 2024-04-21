@@ -1,6 +1,8 @@
 import { Request, Response } from "express"
-import User from "../models/User"
+import User, { UserDocument } from "../models/User"
 import generateToken from "../utils/generateToken"
+import { success } from "../utils/httpResponses"
+import HttpResponsesParams from "../types/HttpResponsesParams"
 
 // @desc    Register a user
 // @route   Post /api/auth/register
@@ -39,13 +41,17 @@ export async function login(req: Request, res: Response) {
     const user = await User.findOne({ email })
 
     if (user && (await user.matchPassword(password))) {
-        return res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            isAdmin: user.isAdmin,
-            token: generateToken(user._id.toString()),
-        })
+        const token = generateToken(user._id.toString())
+        const successParams: HttpResponsesParams<{
+            user: UserDocument
+            token: string
+        }> = {
+            res: res,
+            data: { user: user, token: token },
+            message: "Account created successfully.",
+            code: 200,
+        }
+        return success(successParams)
     } else {
         return res.status(401).json({
             message: "Invalid email or password.",

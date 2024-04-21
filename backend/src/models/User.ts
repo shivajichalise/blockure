@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
     name: string
     email: string
     password: string
