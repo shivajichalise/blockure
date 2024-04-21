@@ -23,23 +23,23 @@ const Register: FC = () => {
     const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
     const [titleSize, setTitleSize] = useState<2 | 5 | 1 | 3 | 4 | undefined>(2)
     const { setUser, setToken } = useAuth()
-    const [loginError, setRegisterError] = useState<string>(
-        "Invalid email or password!"
-    )
+    const [registerError, setRegisterError] = useState<string>("")
     const [spinning, setSpinning] = useState<boolean>(false)
 
     const submitForm = (values: any) => {
         setSpinning(true)
 
-        const { email, password } = values
+        const { name, email, password, password_confirmation } = values
 
         const payload = {
+            name,
             email,
             password,
+            password_confirmation,
         }
 
         axiosClient
-            .post("/auth/login", payload)
+            .post("/auth/register", payload)
             .then(({ data }) => {
                 const userId = data._id
                 const token = data.token
@@ -51,18 +51,13 @@ const Register: FC = () => {
             })
             .catch((err) => {
                 const response = err.response
-                if (response && response.status === 401) {
+                if (response && response.status === 400) {
                     setRegisterError(response.data.message)
                     form.setFields([
                         {
                             name: "email",
                             value: values.email,
-                            errors: [loginError],
-                        },
-                        {
-                            name: "password",
-                            value: "",
-                            errors: [],
+                            errors: [registerError],
                         },
                     ])
                     setSpinning(false)
@@ -106,8 +101,8 @@ const Register: FC = () => {
             >
                 <Form
                     form={form}
-                    name="normal_login"
-                    className="login-form"
+                    name="normal_register"
+                    className="register-form"
                     initialValues={{ remember: true }}
                     size="large"
                     onFinish={submitForm}
@@ -263,7 +258,7 @@ const Register: FC = () => {
                     >
                         <Space direction="horizontal">
                             <Text>Already have an account?</Text>
-                            <Link href="/login">Login</Link>
+                            <Link href="/register">Register</Link>
                         </Space>
                     </Form.Item>
                 </Form>

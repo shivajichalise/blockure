@@ -55,6 +55,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                         fontSize: 14,
                         fontFamily: font,
                     },
+                    components: {
+                        Input: {
+                            controlHeightLG: 45,
+                        },
+                    },
                     algorithm: theme.darkAlgorithm,
                 }}
             >
