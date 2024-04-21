@@ -7,7 +7,7 @@ import Login from "./pages/Login/Login.tsx"
 import GuestPage from "./pages/GuestPage.tsx"
 import AuthContext from "./contexts/AuthContext.tsx"
 import ProtectedRoute from "./utils/ProtectRoute.tsx"
-import Register from "./pages/Register.tsx"
+import Register from "./pages/Register/Register.tsx"
 import "./index.css"
 import font from "./fonts/Mona-Sans.ttf"
 

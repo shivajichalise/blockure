@@ -1,0 +1,17 @@
+#container {
+    height: 100vh;
+}
+
+#register-button {
+    width: 10rem;
+
+    /* For tablets: */
+    @media only screen and (min-width: 600px) {
+        width: 15rem;
+    }
+
+    /* For desktop: */
+    @media only screen and (min-width: 992px) {
+        width: 20rem;
+    }
+}
