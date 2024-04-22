@@ -8,13 +8,26 @@
     font-family: 'Mona-Sans', sans-serif;
 
     color-scheme: light dark;
-    background-color: #141414;
-    background: rgb(14,12,20);
-    background: radial-gradient(circle, rgba(14,12,20,1) 0%, rgba(16,31,39,1) 71%, rgba(29,29,71,1) 100%);
+    background: url("./assets/ellipse-bg.png") no-repeat rgb(14,12,20);
 }
 
 body, html {
     height: 100%;
     width: 100%;
     margin: 0;
+}
+
+.glass, .glass:hover, .glass:focus, .glass:active {
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.glass2, .glass2:hover, .glass2:focus, .glass2:active {
+    background: rgba( 255, 255, 255, 0.05 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 11px );
+    -webkit-backdrop-filter: blur( 11px );
 }

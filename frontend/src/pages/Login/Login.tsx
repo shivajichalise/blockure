@@ -88,6 +88,7 @@ const Login: FC = () => {
                 style={{ height: "70%" }}
             >
                 <Flex
+                    className="glass2"
                     justify="center"
                     align="center"
                     style={{
@@ -140,6 +141,7 @@ const Login: FC = () => {
                                     <MailOutlined style={{ color: "gray" }} />
                                 }
                                 placeholder="Email"
+                                className="glass"
                             />
                         </Form.Item>
                         <Form.Item
@@ -157,6 +159,7 @@ const Login: FC = () => {
                                     visible: passwordVisible,
                                     onVisibleChange: setPasswordVisible,
                                 }}
+                                className="glass"
                             />
                         </Form.Item>
                         <Form.Item>

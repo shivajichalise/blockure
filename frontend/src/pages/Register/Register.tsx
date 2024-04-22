@@ -88,6 +88,7 @@ const Register: FC = () => {
         <Flex justify="center" align="center" id="container">
             <Spin spinning={spinning} fullscreen />
             <Flex
+                className="glass2"
                 justify="center"
                 align="center"
                 style={{
@@ -147,6 +148,7 @@ const Register: FC = () => {
                                         }
                                         placeholder="Name"
                                         size="large"
+                                        className="glass"
                                     />
                                 </Form.Item>
                             </Col>
@@ -167,6 +169,7 @@ const Register: FC = () => {
                                             />
                                         }
                                         placeholder="Email"
+                                        className="glass"
                                     />
                                 </Form.Item>
                             </Col>
@@ -187,6 +190,7 @@ const Register: FC = () => {
                                             visible: passwordVisible,
                                             onVisibleChange: setPasswordVisible,
                                         }}
+                                        className="glass"
                                     />
                                 </Form.Item>
                             </Col>
@@ -226,6 +230,7 @@ const Register: FC = () => {
                                             visible: passwordVisible,
                                             onVisibleChange: setPasswordVisible,
                                         }}
+                                        className="glass"
                                     />
                                 </Form.Item>
                             </Col>
@@ -258,7 +263,7 @@ const Register: FC = () => {
                     >
                         <Space direction="horizontal">
                             <Text>Already have an account?</Text>
-                            <Link href="/register">Register</Link>
+                            <Link href="/login">Login</Link>
                         </Space>
                     </Form.Item>
                 </Form>
