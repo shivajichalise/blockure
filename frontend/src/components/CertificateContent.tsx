@@ -52,29 +52,14 @@ const CertificateContent: FC = () => {
     ]
 
     return (
-        <Content>
-            <Breadcrumb
-                style={{ margin: "0 1rem 1rem 1rem" }}
-                items={[
-                    {
-                        title: "Home",
-                    },
-                    {
-                        title: "Certificate",
-                    },
-                ]}
-            />
-            <Flex justify="center" align="center">
-                <Card
-                    title="Manage Certificates"
-                    bordered={false}
-                    style={{ width: "95%", marginBottom: "2rem" }}
-                    extra={<a href="#">Create</a>}
-                >
-                    <Table columns={columns} dataSource={data} />
-                </Card>
-            </Flex>
-        </Content>
+        <Card
+            title="Manage Certificates"
+            bordered={false}
+            style={{ width: "95%", marginBottom: "2rem" }}
+            extra={<a href="#">Create</a>}
+        >
+            <Table columns={columns} dataSource={data} />
+        </Card>
     )
 }
 
