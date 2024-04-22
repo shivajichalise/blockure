@@ -12,7 +12,6 @@ import {
     Button,
     Layout,
     Menu,
-    theme,
     Image,
     Flex,
     Dropdown,
@@ -27,9 +26,6 @@ const { Header, Sider } = Layout
 
 const Home: FC = () => {
     const [collapsed, setCollapsed] = useState(false)
-    const {
-        token: { colorBgBase, colorTextLightSolid },
-    } = theme.useToken()
 
     const { user, logout } = useAuth()
 
@@ -40,6 +36,8 @@ const Home: FC = () => {
         e.preventDefault()
         logout()
     }
+
+    const [selectedMenu, setSelectedMenu] = useState("1")
 
     const items: MenuProps["items"] = [
         {
@@ -107,6 +105,9 @@ const Home: FC = () => {
                             label: "Users",
                         },
                     ]}
+                    onClick={({ key }) => {
+                        setSelectedMenu(key)
+                    }}
                 />
             </Sider>
             <Layout
@@ -156,7 +157,7 @@ const Home: FC = () => {
                         </Flex>
                     </Flex>
                 </Header>
-                <CertificateContent />
+                {selectedMenu === "2" ? <CertificateContent /> : ""}
             </Layout>
         </Layout>
     )
