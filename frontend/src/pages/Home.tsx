@@ -4,6 +4,7 @@ import {
     MenuUnfoldOutlined,
     UserOutlined,
     SafetyCertificateOutlined,
+    HomeOutlined,
 } from "@ant-design/icons"
 import {
     Space,
@@ -16,19 +17,24 @@ import {
     Flex,
     Dropdown,
 } from "antd"
-import logo from "../assets/long-logo.png"
+import longLogo from "../assets/long-logo.png"
+import smallLogo from "../assets/logo.png"
 import { DownOutlined } from "@ant-design/icons"
 import { useAuth } from "../contexts/AuthContext"
+import CertificateContent from "../components/CertificateContent"
 
-const { Header, Sider, Content } = Layout
+const { Header, Sider } = Layout
 
 const Home: FC = () => {
     const [collapsed, setCollapsed] = useState(false)
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: { colorBgBase, colorTextLightSolid },
     } = theme.useToken()
 
     const { user, logout } = useAuth()
+
+    const [logo, setLogo] = useState(longLogo)
+    const [logoSize, setLogoSize] = useState(150)
 
     const handleLogout: MouseEventHandler<HTMLAnchorElement> = (e) => {
         e.preventDefault()
@@ -46,15 +52,28 @@ const Home: FC = () => {
         },
     ]
 
+    useEffect(() => {
+        if (collapsed) {
+            setLogo(smallLogo)
+            setLogoSize(40)
+        } else {
+            setLogo(longLogo)
+            setLogoSize(150)
+        }
+    }, [collapsed])
+
     return (
-        <Layout hasSider>
+        <Layout
+            hasSider
+            style={{ background: "rgba(0,0,0,0)", minHeight: "100vh" }}
+        >
             <Sider
                 trigger={null}
                 collapsible
                 collapsed={collapsed}
                 style={{
-                    overflow: "auto",
-                    height: "100vh",
+                    background: "rgba(0,0,0,0)",
+                    borderRight: "1px solid #9FA7AE",
                 }}
             >
                 <Flex
@@ -62,28 +81,42 @@ const Home: FC = () => {
                     align="center"
                     style={{ margin: "1rem" }}
                 >
-                    <Image src={logo} preview={false} width={150} />
+                    <Image src={logo} preview={false} width={logoSize} />
                 </Flex>
                 <Menu
                     theme="dark"
                     mode="inline"
+                    style={{
+                        background: "rgba(0,0,0,0)",
+                    }}
+                    defaultSelectedKeys={["1"]}
                     items={[
                         {
                             key: "1",
+                            icon: <HomeOutlined />,
+                            label: "Home",
+                        },
+                        {
+                            key: "2",
                             icon: <SafetyCertificateOutlined />,
                             label: "Certificates",
                         },
                         {
-                            key: "2",
+                            key: "3",
                             icon: <UserOutlined />,
                             label: "Users",
                         },
                     ]}
                 />
             </Sider>
-            <Layout>
+            <Layout
+                style={{
+                    background: "rgba(0,0,0,0)",
+                }}
+            >
                 <Header
-                    style={{ paddingLeft: 0, background: colorBgContainer }}
+                    className=""
+                    style={{ paddingLeft: 0, background: "rgba(0,0,0,0)" }}
                 >
                     <Flex justify="space-between">
                         <Flex>
@@ -123,15 +156,7 @@ const Home: FC = () => {
                         </Flex>
                     </Flex>
                 </Header>
-                <Content
-                    style={{
-                        margin: "24px 16px",
-                        padding: 24,
-                        minHeight: 280,
-                        background: colorBgContainer,
-                        borderRadius: borderRadiusLG,
-                    }}
-                ></Content>
+                <CertificateContent />
             </Layout>
         </Layout>
     )

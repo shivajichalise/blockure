@@ -31,3 +31,10 @@ body, html {
     backdrop-filter: blur( 11px );
     -webkit-backdrop-filter: blur( 11px );
 }
+
+.glass3 {
+    /* background contains the primary color rather then white */
+    background: rgba( 109, 111, 243, 0.2 );
+    backdrop-filter: blur( 16.5px );
+    -webkit-backdrop-filter: blur( 16.5px );
+}
