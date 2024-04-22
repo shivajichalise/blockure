@@ -28,13 +28,11 @@ const Home: FC = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken()
 
-    const { user, setUser, setToken } = useAuth()
+    const { user, logout } = useAuth()
 
     const handleLogout: MouseEventHandler<HTMLAnchorElement> = (e) => {
         e.preventDefault()
-        setUser(null)
-        setToken(null)
-        window.location.href = "/login"
+        logout()
     }
 
     const items: MenuProps["items"] = [
@@ -117,9 +115,7 @@ const Home: FC = () => {
                                     style={{ color: "#ffffff" }}
                                 >
                                     <Space>
-                                        {user !== null
-                                            ? JSON.parse(user).name
-                                            : ""}
+                                        {user ? JSON.parse(user).name : ""}
                                         <DownOutlined />
                                     </Space>
                                 </a>

@@ -5,6 +5,7 @@ type ContextData = {
     token: string | null
     setUser: (user: string | null) => void
     setToken: (token: string | null) => void
+    logout: () => void
 }
 
 const initialState: ContextData = {
@@ -12,6 +13,7 @@ const initialState: ContextData = {
     token: null,
     setUser: () => {},
     setToken: () => {},
+    logout: () => {},
 }
 
 const AuthContext = createContext(initialState)
@@ -37,7 +39,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
 
     function setUser(user: string | null) {
-        _setUser(token)
+        _setUser(user)
 
         if (user) {
             localStorage.setItem("USER", user)
@@ -46,8 +48,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         }
     }
 
+    function logout() {
+        _setToken(null)
+        _setUser(null)
+        localStorage.removeItem("ACCESS_TOKEN")
+        localStorage.removeItem("USER")
+    }
+
     return (
-        <AuthContext.Provider value={{ user, token, setUser, setToken }}>
+        <AuthContext.Provider
+            value={{ user, token, setUser, setToken, logout }}
+        >
             {children}
         </AuthContext.Provider>
     )
