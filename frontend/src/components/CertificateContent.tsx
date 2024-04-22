@@ -49,66 +49,6 @@ const CertificateContent: FC = () => {
             issued_on: new Date().toDateString(),
             id: "432jnasdf43ads",
         },
-        {
-            key: "2",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "3",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "4",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "5",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "6",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "7",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "8",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "9",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "10",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
-        {
-            key: "11",
-            issued_by: "John Brown",
-            issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
-        },
     ]
 
     return (
