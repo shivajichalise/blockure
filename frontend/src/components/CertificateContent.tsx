@@ -1,9 +1,7 @@
 import { FC } from "react"
-import { Breadcrumb, Flex, Layout, Table, Space, Card } from "antd"
+import { Table, Space, Card } from "antd"
 import type { TableProps } from "antd"
-import { EyeFilled } from "@ant-design/icons"
-
-const { Content } = Layout
+import { EyeFilled, PlusSquareFilled } from "@ant-design/icons"
 
 const CertificateContent: FC = () => {
     interface DataType {
@@ -14,6 +12,11 @@ const CertificateContent: FC = () => {
     }
 
     const columns: TableProps<DataType>["columns"] = [
+        {
+            title: "#",
+            dataIndex: "key",
+            rowScope: "row",
+        },
         {
             title: "Issued by",
             dataIndex: "issued_by",
@@ -56,7 +59,11 @@ const CertificateContent: FC = () => {
             title="Manage Certificates"
             bordered={false}
             style={{ width: "95%", marginBottom: "2rem" }}
-            extra={<a href="#">Create</a>}
+            extra={
+                <a href="#" style={{ fontSize: "1rem" }}>
+                    <PlusSquareFilled />
+                </a>
+            }
         >
             <Table columns={columns} dataSource={data} />
         </Card>
