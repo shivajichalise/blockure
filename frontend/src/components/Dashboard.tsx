@@ -18,6 +18,7 @@ import { useAuth } from "../contexts/AuthContext"
 import DashboardProps from "../types/DashboardProps"
 import menus from "../config/menus"
 import { Content } from "antd/es/layout/layout"
+import ProtectedRoute from "../utils/ProtectRoute"
 
 const { Header, Sider } = Layout
 
@@ -72,7 +73,7 @@ const Dashboard = ({ children }: DashboardProps) => {
     }, [page])
 
     useEffect(() => {
-        setPage(convertToTitleCase(window.location.pathname))
+        setPage(convertToTitleCase(window.location.pathname).split(" ")[0])
     }, [window.location.pathname])
 
     useEffect(() => {
@@ -86,101 +87,103 @@ const Dashboard = ({ children }: DashboardProps) => {
     }, [collapsed])
 
     return (
-        <Layout
-            hasSider
-            style={{ background: "rgba(0,0,0,0)", minHeight: "100vh" }}
-        >
-            <Sider
-                trigger={null}
-                collapsible
-                collapsed={collapsed}
-                style={{
-                    background: "rgba(0,0,0,0)",
-                    borderRight: "1px solid #9FA7AE",
-                }}
+        <ProtectedRoute>
+            <Layout
+                hasSider
+                style={{ background: "rgba(0,0,0,0)", minHeight: "100vh" }}
             >
-                <Flex
-                    justify="center"
-                    align="center"
-                    style={{ margin: "1rem" }}
+                <Sider
+                    trigger={null}
+                    collapsible
+                    collapsed={collapsed}
+                    style={{
+                        background: "rgba(0,0,0,0)",
+                        borderRight: "1px solid #9FA7AE",
+                    }}
                 >
-                    <Image src={logo} preview={false} width={logoSize} />
-                </Flex>
-                <Menu
-                    theme="dark"
-                    mode="inline"
+                    <Flex
+                        justify="center"
+                        align="center"
+                        style={{ margin: "1rem" }}
+                    >
+                        <Image src={logo} preview={false} width={logoSize} />
+                    </Flex>
+                    <Menu
+                        theme="dark"
+                        mode="inline"
+                        style={{
+                            background: "rgba(0,0,0,0)",
+                        }}
+                        selectedKeys={[selectedMenu]}
+                        items={menus}
+                    />
+                </Sider>
+                <Layout
                     style={{
                         background: "rgba(0,0,0,0)",
                     }}
-                    selectedKeys={[selectedMenu]}
-                    items={menus}
-                />
-            </Sider>
-            <Layout
-                style={{
-                    background: "rgba(0,0,0,0)",
-                }}
-            >
-                <Header
-                    className=""
-                    style={{ paddingLeft: 0, background: "rgba(0,0,0,0)" }}
                 >
-                    <Flex justify="space-between">
-                        <Flex>
-                            <Button
-                                type="text"
-                                icon={
-                                    collapsed ? (
-                                        <MenuUnfoldOutlined />
-                                    ) : (
-                                        <MenuFoldOutlined />
-                                    )
-                                }
-                                onClick={() => setCollapsed(!collapsed)}
-                                style={{
-                                    fontSize: "16px",
-                                    width: 64,
-                                    height: 64,
-                                }}
-                            />
-                        </Flex>
-                        <Flex>
-                            <Dropdown
-                                menu={{ items }}
-                                trigger={["click"]}
-                                align={{ offset: [0, -10] }}
-                            >
-                                <a
-                                    onClick={(e) => e.preventDefault()}
-                                    style={{ color: "#ffffff" }}
+                    <Header
+                        className=""
+                        style={{ paddingLeft: 0, background: "rgba(0,0,0,0)" }}
+                    >
+                        <Flex justify="space-between">
+                            <Flex>
+                                <Button
+                                    type="text"
+                                    icon={
+                                        collapsed ? (
+                                            <MenuUnfoldOutlined />
+                                        ) : (
+                                            <MenuFoldOutlined />
+                                        )
+                                    }
+                                    onClick={() => setCollapsed(!collapsed)}
+                                    style={{
+                                        fontSize: "16px",
+                                        width: 64,
+                                        height: 64,
+                                    }}
+                                />
+                            </Flex>
+                            <Flex>
+                                <Dropdown
+                                    menu={{ items }}
+                                    trigger={["click"]}
+                                    align={{ offset: [0, -10] }}
                                 >
-                                    <Space>
-                                        {user ? JSON.parse(user).name : ""}
-                                        <DownOutlined />
-                                    </Space>
-                                </a>
-                            </Dropdown>
+                                    <a
+                                        onClick={(e) => e.preventDefault()}
+                                        style={{ color: "#ffffff" }}
+                                    >
+                                        <Space>
+                                            {user ? JSON.parse(user).name : ""}
+                                            <DownOutlined />
+                                        </Space>
+                                    </a>
+                                </Dropdown>
+                            </Flex>
                         </Flex>
-                    </Flex>
-                </Header>
-                <Content>
-                    <Breadcrumb
-                        style={{ margin: "0 1rem 1rem 1rem" }}
-                        items={[
-                            {
-                                title: "Home",
-                            },
-                            {
-                                title: page,
-                            },
-                        ]}
-                    />
-                    <Flex justify="center" align="center">
-                        {children}
-                    </Flex>
-                </Content>
+                    </Header>
+                    <Content>
+                        <Breadcrumb
+                            style={{ margin: "0 1rem 1rem 1rem" }}
+                            items={[
+                                {
+                                    title: "Home",
+                                },
+                                {
+                                    title: page,
+                                },
+                            ]}
+                        />
+                        <Flex justify="center" align="center">
+                            {children}
+                        </Flex>
+                    </Content>
+                </Layout>
             </Layout>
-        </Layout>
+        </ProtectedRoute>
     )
 }
 

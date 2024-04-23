@@ -2,6 +2,7 @@ import { FC } from "react"
 import { Table, Space, Card } from "antd"
 import type { TableProps } from "antd"
 import { EyeFilled, PlusSquareFilled } from "@ant-design/icons"
+import { Link } from "react-router-dom"
 
 const CertificateContent: FC = () => {
     interface DataType {
@@ -60,9 +61,9 @@ const CertificateContent: FC = () => {
             bordered={false}
             style={{ width: "95%", marginBottom: "2rem" }}
             extra={
-                <a href="/certificates/create" style={{ fontSize: "1rem" }}>
+                <Link to="/certificates/create" style={{ fontSize: "1rem" }}>
                     <PlusSquareFilled />
-                </a>
+                </Link>
             }
         >
             <Table columns={columns} dataSource={data} />

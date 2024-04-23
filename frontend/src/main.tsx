@@ -13,36 +13,39 @@ import Dashboard from "./components/Dashboard.tsx"
 import UserContent from "./components/UserContent.tsx"
 import CertificateContent from "./components/CertificateContent.tsx"
 import HomeContent from "./components/HomeContent.tsx"
+import CreateCertificateContent from "./components/CreateCertificateContent.tsx"
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: (
-            <ProtectedRoute>
-                <Dashboard>
-                    <HomeContent />
-                </Dashboard>
-            </ProtectedRoute>
+            <Dashboard>
+                <HomeContent />
+            </Dashboard>
         ),
     },
     {
         path: "/users",
         element: (
-            <ProtectedRoute>
-                <Dashboard>
-                    <UserContent />
-                </Dashboard>
-            </ProtectedRoute>
+            <Dashboard>
+                <UserContent />
+            </Dashboard>
         ),
     },
     {
         path: "/certificates",
         element: (
-            <ProtectedRoute>
-                <Dashboard>
-                    <CertificateContent />
-                </Dashboard>
-            </ProtectedRoute>
+            <Dashboard>
+                <CertificateContent />
+            </Dashboard>
+        ),
+    },
+    {
+        path: "/certificates/create",
+        element: (
+            <Dashboard>
+                <CreateCertificateContent />
+            </Dashboard>
         ),
     },
     {
