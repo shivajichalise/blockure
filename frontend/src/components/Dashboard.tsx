@@ -21,7 +21,27 @@ import { Content } from "antd/es/layout/layout"
 
 const { Header, Sider } = Layout
 
-const Dashboard = ({ children, page, handleMenuChange }: DashboardProps) => {
+function capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function convertToTitleCase(path: string): string {
+    // Split the path by '/'
+    const segments = path.split("/").filter((segment) => segment.trim() !== "")
+
+    // Capitalize each segment and join them with a space
+    const titleCase = segments.map((segment) => capitalize(segment)).join(" ")
+
+    return titleCase
+}
+
+const Dashboard = ({ children }: DashboardProps) => {
+    const [page, setPage] = useState<string>(
+        convertToTitleCase(window.location.pathname)
+    )
+
+    const [selectedMenu, setSelectedMenu] = useState<string>("")
+
     const [collapsed, setCollapsed] = useState(false)
 
     const { user, logout } = useAuth()
@@ -44,6 +64,16 @@ const Dashboard = ({ children, page, handleMenuChange }: DashboardProps) => {
             key: "0",
         },
     ]
+
+    useEffect(() => {
+        const menu = menus.find((menu) => menu.text === page)
+        const menuKey = menu ? menu.key : "1"
+        setSelectedMenu(menuKey)
+    }, [page])
+
+    useEffect(() => {
+        setPage(convertToTitleCase(window.location.pathname))
+    }, [window.location.pathname])
 
     useEffect(() => {
         if (collapsed) {
@@ -82,9 +112,8 @@ const Dashboard = ({ children, page, handleMenuChange }: DashboardProps) => {
                     style={{
                         background: "rgba(0,0,0,0)",
                     }}
-                    defaultSelectedKeys={["1"]}
+                    selectedKeys={[selectedMenu]}
                     items={menus}
-                    onClick={handleMenuChange}
                 />
             </Sider>
             <Layout

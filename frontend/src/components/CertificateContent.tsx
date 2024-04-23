@@ -60,7 +60,7 @@ const CertificateContent: FC = () => {
             bordered={false}
             style={{ width: "95%", marginBottom: "2rem" }}
             extra={
-                <a href="#" style={{ fontSize: "1rem" }}>
+                <a href="/certificates/create" style={{ fontSize: "1rem" }}>
                     <PlusSquareFilled />
                 </a>
             }

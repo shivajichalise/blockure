@@ -2,7 +2,6 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import { ConfigProvider, theme } from "antd"
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import Home from "./pages/Home.tsx"
 import Login from "./pages/Login/Login.tsx"
 import GuestPage from "./pages/GuestPage.tsx"
 import AuthContext from "./contexts/AuthContext.tsx"
@@ -10,13 +9,39 @@ import ProtectedRoute from "./utils/ProtectRoute.tsx"
 import Register from "./pages/Register/Register.tsx"
 import "./index.css"
 import font from "./fonts/Mona-Sans.ttf"
+import Dashboard from "./components/Dashboard.tsx"
+import UserContent from "./components/UserContent.tsx"
+import CertificateContent from "./components/CertificateContent.tsx"
+import HomeContent from "./components/HomeContent.tsx"
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: (
             <ProtectedRoute>
-                <Home />
+                <Dashboard>
+                    <HomeContent />
+                </Dashboard>
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/users",
+        element: (
+            <ProtectedRoute>
+                <Dashboard>
+                    <UserContent />
+                </Dashboard>
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/certificates",
+        element: (
+            <ProtectedRoute>
+                <Dashboard>
+                    <CertificateContent />
+                </Dashboard>
             </ProtectedRoute>
         ),
     },
