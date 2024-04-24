@@ -89,7 +89,12 @@ const CertificateInput = ({ label, handleRemove }: CertificateInputProps) => {
                             style={{ width: "100%" }}
                         />
                     </Form.Item>
-                    <Form.Item name={`${label}_color`}>
+                    <Form.Item
+                        name={`${label}_color`}
+                        getValueFromEvent={(color) => {
+                            return "#" + color.toHex()
+                        }}
+                    >
                         <ColorPicker
                             className="glass"
                             showText

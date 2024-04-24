@@ -9,6 +9,8 @@ import { useState } from "react"
 import { Modal, message } from "antd"
 import type { GetProp } from "antd"
 import { InputStatus } from "antd/es/_util/statusUtils"
+import { Empty } from "antd"
+import axiosClient from "../axios-client"
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0]
 
@@ -18,9 +20,21 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
     reader.readAsDataURL(img)
 }
 
+interface OrganizedData {
+    [prefix: string]: { [field: string]: any }
+}
+
 const CreateCertificateContent = () => {
     const [form] = Form.useForm()
     const [fieldLabels, setFieldLabels] = useState(["Name"])
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [newLabel, setNewLabel] = useState<string>("")
+    const [newLabelStatus, setNewLabelStatus] = useState<InputStatus>("")
+    const [messageApi, contextHolder] = message.useMessage()
+    const [errorMessage, setErrorMessage] = useState("Label cannot be empty!")
+    const [loading, setLoading] = useState(false)
+    const [imageUrl, setImageUrl] = useState<string>("")
+    const [imageName, setImageName] = useState<string>("")
 
     const handleAdd = (label: string) => {
         setFieldLabels([...fieldLabels, label])
@@ -31,14 +45,47 @@ const CreateCertificateContent = () => {
     }
 
     const submitForm = (values: any) => {
-        console.log(values)
-    }
+        const organizedData: OrganizedData = {}
 
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [newLabel, setNewLabel] = useState<string>("")
-    const [newLabelStatus, setNewLabelStatus] = useState<InputStatus>("")
-    const [messageApi, contextHolder] = message.useMessage()
-    const [errorMessage, setErrorMessage] = useState("Label cannot be empty!")
+        /*
+          The data that the form gives is in format:
+          {
+            Name_value: "Shivaji Chalise",
+            Name_x: 10,
+            Name_y: 20
+            .
+            .
+          }
+
+          to convert the data into needed format below method is needed
+           */
+        for (const key in values) {
+            const [prefix, field] = key.split("_")
+
+            if (!organizedData[prefix]) {
+                organizedData[prefix] = {}
+            }
+
+            organizedData[prefix][field] = values[key]
+        }
+
+        const payload = {
+            fields: organizedData,
+            certificate: imageName,
+        }
+
+        axiosClient
+            .post("/certificates/issue", payload)
+            .then(({ data }) => {
+                message.success(`${data.message}`)
+            })
+            .catch((err) => {
+                const response = err.response
+                if (response && response.status === 401) {
+                    console.log(response.message())
+                }
+            })
+    }
 
     const error = (message: string) => {
         messageApi.open({
@@ -75,10 +122,6 @@ const CreateCertificateContent = () => {
     const handleLabelInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewLabel(e.target.value)
     }
-
-    const [loading, setLoading] = useState(false)
-    const [imageUrl, setImageUrl] = useState<string>("")
-    const [imageName, setImageName] = useState<string>("")
 
     const uploadProps: UploadProps = {
         name: "certificate",
@@ -169,11 +212,12 @@ const CreateCertificateContent = () => {
                                         key={i}
                                         label={e}
                                         handleRemove={handleRemove}
+                                        form={form}
                                     />
                                 )
                             })}
                             <Form.Item>
-                                <Upload {...uploadProps}>
+                                <Upload {...uploadProps} showUploadList={false}>
                                     <Button
                                         icon={
                                             loading ? (
@@ -200,14 +244,23 @@ const CreateCertificateContent = () => {
                         width: "40%",
                         height: "25rem",
                         border: "1px solid #B7B7B7",
-                        borderRadius: 20,
+                        borderRadius: 10,
                     }}
                 >
-                    <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{ width: "100%", borderRadius: 10 }}
-                    />
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt="avatar"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: 10,
+                                objectFit: "cover",
+                            }}
+                        />
+                    ) : (
+                        <Empty description={false} />
+                    )}
                 </Flex>
             </Flex>
         </Flex>

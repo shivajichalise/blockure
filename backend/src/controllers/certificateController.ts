@@ -59,24 +59,34 @@ export async function create(req: Request, res: Response) {
     }
 }
 
+// export async function issue(req: Request, res: Response) {
+//     const result = validationResult(req)
+//
+//     if (!result.isEmpty()) {
+//         return res.send({ errors: result.array() })
+//     }
+//
+//     const certificateImage = req.file
+//
+//     if (!certificateImage) {
+//         return res
+//             .status(400)
+//             .json({ message: "Please provide valid certificate image." })
+//     }
+//
+//     const image = certificateImage.path.split("/")[1]
+//
+//     const { fields } = req.body
+//
+//     return await generate(image, fields, res)
+// }
+
 export async function issue(req: Request, res: Response) {
-    const result = validationResult(req)
-
-    if (!result.isEmpty()) {
-        return res.send({ errors: result.array() })
-    }
-
-    const certificateImage = req.file
-
-    if (!certificateImage) {
-        return res
-            .status(400)
-            .json({ message: "Please provide valid certificate image." })
-    }
-
-    const image = certificateImage.path.split("/")[1]
+    const image = req.body.certificate
 
     const { fields } = req.body
+
+    console.log("fields", req.body)
 
     return await generate(image, fields, res)
 }
