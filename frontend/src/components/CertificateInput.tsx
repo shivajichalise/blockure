@@ -58,7 +58,16 @@ const CertificateInput = ({ label, handleRemove }: CertificateInputProps) => {
                         onClick={() => removeData(label)}
                     />
                 </Flex>
-                <Form.Item name={`${label}_value`} style={{ margin: "0px" }}>
+                <Form.Item
+                    name={`${label}_value`}
+                    style={{ margin: "0px" }}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Value is required!",
+                        },
+                    ]}
+                >
                     <Input placeholder="Value" className="glass" />
                 </Form.Item>
                 <Space.Compact
@@ -68,21 +77,45 @@ const CertificateInput = ({ label, handleRemove }: CertificateInputProps) => {
                     }}
                     block
                 >
-                    <Form.Item name={`${label}_x`}>
+                    <Form.Item
+                        name={`${label}_x`}
+                        rules={[
+                            {
+                                required: true,
+                                message: "X is required!",
+                            },
+                        ]}
+                    >
                         <InputNumber
                             className="glass"
                             placeholder="X coord"
                             style={{ width: "100%" }}
                         />
                     </Form.Item>
-                    <Form.Item name={`${label}_y`}>
+                    <Form.Item
+                        name={`${label}_y`}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Y is required!",
+                            },
+                        ]}
+                    >
                         <InputNumber
                             className="glass"
                             placeholder="Y coord"
                             style={{ width: "100%" }}
                         />
                     </Form.Item>
-                    <Form.Item name={`${label}_angle`}>
+                    <Form.Item
+                        name={`${label}_angle`}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Angle is required!",
+                            },
+                        ]}
+                    >
                         <InputNumber
                             className="glass"
                             placeholder="Angle"
@@ -94,6 +127,12 @@ const CertificateInput = ({ label, handleRemove }: CertificateInputProps) => {
                         getValueFromEvent={(color) => {
                             return "#" + color.toHex()
                         }}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Color is required!",
+                            },
+                        ]}
                     >
                         <ColorPicker
                             className="glass"
