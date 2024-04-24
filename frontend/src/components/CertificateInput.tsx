@@ -26,9 +26,7 @@ const CertificateInput = ({ label, handleRemove }: CertificateInputProps) => {
         handleRemove(label)
     }
 
-    useEffect(() => {
-        console.log(formData)
-    }, [formData])
+    useEffect(() => {}, [formData])
 
     return (
         <Flex

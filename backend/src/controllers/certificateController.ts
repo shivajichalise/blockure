@@ -121,3 +121,25 @@ async function generate(image: string, fields: Fields, res: Response) {
                 .json({ message: "Certificate generation failed!", error: err })
         })
 }
+
+export async function upload(req: Request, res: Response) {
+    const result = validationResult(req)
+
+    if (!result.isEmpty()) {
+        return res.send({ errors: result.array() })
+    }
+
+    const certificateImage = req.file
+
+    if (!certificateImage) {
+        return res
+            .status(400)
+            .json({ message: "Please provide valid certificate image." })
+    }
+
+    const image = certificateImage.path.split("/")[1]
+
+    return res
+        .status(201)
+        .json({ message: "Certificate uploaded!", certificate: image })
+}

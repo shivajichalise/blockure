@@ -1,5 +1,10 @@
 import express from "express"
-import { test, create, issue } from "../controllers/certificateController"
+import {
+    test,
+    create,
+    issue,
+    upload,
+} from "../controllers/certificateController"
 import handleUpload from "../utils/multer"
 import { body } from "express-validator"
 
@@ -8,6 +13,8 @@ const router = express.Router()
 router.get("/", test)
 
 router.post("/", handleUpload.single("image"), create)
+
+router.post("/upload", handleUpload.single("certificate"), upload)
 
 router.post(
     "/issue",
