@@ -59,6 +59,7 @@ export async function create(req: Request, res: Response) {
     }
 }
 
+// below function works when certificate image is accepted from the request.. works from postman
 // export async function issue(req: Request, res: Response) {
 //     const result = validationResult(req)
 //
@@ -85,8 +86,6 @@ export async function issue(req: Request, res: Response) {
     const image = req.body.certificate
 
     const { fields } = req.body
-
-    console.log("fields", req.body)
 
     return await generate(image, fields, res)
 }
@@ -120,9 +119,9 @@ async function generate(image: string, fields: Fields, res: Response) {
     }
 
     await img
-        .writeAsync("uploads/output.png")
+        .writeAsync(`certificates/certificate-${image}`)
         .then((success) => {
-            console.log("Successl", success)
+            console.log("Success", success)
             return res.status(201).json({ message: "Certificate generated!" })
         })
         .catch((err) => {
