@@ -11,6 +11,7 @@ import type { GetProp } from "antd"
 import { InputStatus } from "antd/es/_util/statusUtils"
 import { Empty } from "antd"
 import axiosClient from "../axios-client"
+import InputText from "./InputText"
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0]
 
@@ -206,6 +207,8 @@ const CreateCertificateContent = () => {
                         }}
                     >
                         <Form form={form} onFinish={submitForm}>
+                            <InputText label="Address" placeholder="Address" />
+
                             {fieldLabels.map((e, i) => {
                                 return (
                                     <CertificateInput
