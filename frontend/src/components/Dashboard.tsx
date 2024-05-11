@@ -77,6 +77,27 @@ const Dashboard = ({ children }: DashboardProps) => {
     }, [window.location.pathname])
 
     useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 600) {
+                setCollapsed(true)
+            } else {
+                if (!collapsed) {
+                    setCollapsed(false)
+                }
+            }
+        }
+
+        handleResize()
+
+        window.addEventListener("resize", handleResize)
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener("resize", handleResize)
+        }
+    }, [])
+
+    useEffect(() => {
         if (collapsed) {
             setLogo(smallLogo)
             setLogoSize(40)
