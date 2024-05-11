@@ -8,9 +8,8 @@ const issuedCertificateSchema = new mongoose.Schema(
             ref: "User",
         },
         certificate: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
-            ref: "Certificate",
         },
         recipientDetails: {
             name: {
