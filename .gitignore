@@ -130,4 +130,5 @@ dist
 .pnp.*
 
 uploads/*
+certificates/*
 .DS_STORE

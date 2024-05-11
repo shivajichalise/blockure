@@ -5,7 +5,7 @@ import certificateRoutes from "./routes/certificateRoutes"
 import authRoutes from "./routes/authRoutes"
 import connectDB from "./config/db"
 
-connectDB()
+// connectDB()
 
 const app = express()
 app.use(express.json())

@@ -121,7 +121,6 @@ async function generate(image: string, fields: Fields, res: Response) {
     await img
         .writeAsync(`certificates/certificate-${image}`)
         .then((success) => {
-            console.log("Success", success)
             return res.status(201).json({ message: "Certificate generated!" })
         })
         .catch((err) => {

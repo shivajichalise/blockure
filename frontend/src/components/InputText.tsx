@@ -1,7 +1,7 @@
 import { Flex, Form, Input, Typography } from "antd"
 import InputTextProps from "../types/InputTextProps"
 
-const InputText = ({ label, placeholder }: InputTextProps) => {
+const InputText = ({ label, placeholder, name }: InputTextProps) => {
     return (
         <Flex
             style={{ marginBottom: "2rem", height: "100%", width: "100%" }}
@@ -25,7 +25,7 @@ const InputText = ({ label, placeholder }: InputTextProps) => {
                     </Typography.Text>
                 </Flex>
                 <Form.Item
-                    name={`${label}_value`}
+                    name={name}
                     style={{ margin: "0px" }}
                     rules={[
                         {

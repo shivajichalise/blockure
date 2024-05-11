@@ -48,6 +48,11 @@ const CreateCertificateContent = () => {
     const submitForm = (values: any) => {
         const organizedData: OrganizedData = {}
 
+        if (imageUrl.length === 0) {
+            message.error(`Upload certificate template to continue.`)
+            return
+        }
+
         /*
           The data that the form gives is in format:
           {
@@ -61,18 +66,21 @@ const CreateCertificateContent = () => {
           to convert the data into needed format below method is needed
            */
         for (const key in values) {
-            const [prefix, field] = key.split("_")
+            if (key !== "address") {
+                const [prefix, field] = key.split("_")
 
-            if (!organizedData[prefix]) {
-                organizedData[prefix] = {}
+                if (!organizedData[prefix]) {
+                    organizedData[prefix] = {}
+                }
+
+                organizedData[prefix][field] = values[key]
             }
-
-            organizedData[prefix][field] = values[key]
         }
 
         const payload = {
             fields: organizedData,
             certificate: imageName,
+            address: values["address"],
         }
 
         axiosClient
@@ -132,7 +140,6 @@ const CreateCertificateContent = () => {
         },
         onChange(info) {
             if (info.file.status == "uploading") {
-                console.log(info.file, info.fileList)
                 setLoading(true)
                 return
             }
@@ -207,7 +214,11 @@ const CreateCertificateContent = () => {
                         }}
                     >
                         <Form form={form} onFinish={submitForm}>
-                            <InputText label="Address" placeholder="Address" />
+                            <InputText
+                                label="Address"
+                                placeholder="Address"
+                                name="address"
+                            />
 
                             {fieldLabels.map((e, i) => {
                                 return (

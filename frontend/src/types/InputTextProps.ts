@@ -1,4 +1,5 @@
 interface InputTextProps {
+    name: string
     label: string
     placeholder: string
 }
