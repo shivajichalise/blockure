@@ -66,7 +66,7 @@ const CreateCertificateContent = () => {
           to convert the data into needed format below method is needed
            */
         for (const key in values) {
-            if (key !== "address") {
+            if (key !== "address" && key !== "recipient") {
                 const [prefix, field] = key.split("_")
 
                 if (!organizedData[prefix]) {
@@ -81,6 +81,7 @@ const CreateCertificateContent = () => {
             fields: organizedData,
             certificate: imageName,
             address: values["address"],
+            recipient: values["recipient"],
         }
 
         axiosClient
@@ -215,8 +216,14 @@ const CreateCertificateContent = () => {
                     >
                         <Form form={form} onFinish={submitForm}>
                             <InputText
-                                label="Address"
-                                placeholder="Address"
+                                label="Recipient name"
+                                placeholder="Recipient name"
+                                name="recipient"
+                            />
+
+                            <InputText
+                                label="Recipient address"
+                                placeholder="Recipient address"
                                 name="address"
                             />
 

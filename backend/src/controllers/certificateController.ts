@@ -3,6 +3,9 @@ import Certificate from "../models/Certificate"
 import { validationResult } from "express-validator"
 import path from "path"
 import Jimp from "jimp"
+import IssuedCertificate from "../models/IssuedCertificate"
+import getCurrentUserId from "../utils/getCurrentUserId"
+import { now } from "mongoose"
 
 interface Color {
     red: number
@@ -82,15 +85,65 @@ export async function create(req: Request, res: Response) {
 //     return await generate(image, fields, res)
 // }
 
+async function storeOnDB(
+    issuer: string,
+    certificate: string,
+    recipientName: string,
+    recipientAddress: string
+) {
+    const recipientDetails = {
+        name: recipientName,
+        address: recipientAddress,
+    }
+    const issuedDate = new Date().getDate()
+
+    const issued = await IssuedCertificate.create({
+        issuer,
+        certificate,
+        recipientDetails,
+        issuedDate,
+    })
+
+    if (issued) {
+        return true
+    } else {
+        return false
+    }
+}
+
 export async function issue(req: Request, res: Response) {
     const image = req.body.certificate
 
-    const { fields } = req.body
+    const { recipient, address, fields } = req.body
 
-    return await generate(image, fields, res)
+    const generated = JSON.parse(await generate(image, fields))
+
+    if (generated.status) {
+        const userId = getCurrentUserId(req)!
+
+        const store = await storeOnDB(userId, "qwertyuiop", recipient, address)
+
+        if (store) {
+            return res.status(201).json({
+                message: "Certificate generated!",
+            })
+        } else {
+            return res
+                .status(400)
+                .json({ messgae: "Certificate generation failed." })
+        }
+    } else {
+        return res
+            .status(500)
+            .json({ messgae: "Certificate generation failed." })
+    }
 }
 
-async function generate(image: string, fields: Fields, res: Response) {
+async function storeOnIPFS() {
+    // api call to pinata goes here
+}
+
+async function generate(image: string, fields: Fields) {
     const imagePath = path.join("uploads/", image)
     const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
     const img = await Jimp.read(imagePath)
@@ -118,15 +171,19 @@ async function generate(image: string, fields: Fields, res: Response) {
         }
     }
 
-    await img
+    return await img
         .writeAsync(`certificates/certificate-${image}`)
-        .then((success) => {
-            return res.status(201).json({ message: "Certificate generated!" })
+        .then((_) => {
+            return JSON.stringify({
+                status: true,
+                image: `certificate-${image}`,
+            })
         })
         .catch((err) => {
-            return res
-                .status(500)
-                .json({ message: "Certificate generation failed!", error: err })
+            return JSON.stringify({
+                status: false,
+                error: err,
+            })
         })
 }
 

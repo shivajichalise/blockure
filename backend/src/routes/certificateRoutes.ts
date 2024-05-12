@@ -107,6 +107,14 @@ router.post(
             })
             .withMessage("Certificate image is required!"),
     ],
+    body("recipient")
+        .trim()
+        .notEmpty()
+        .withMessage("Recipient name field is required."),
+    body("address")
+        .trim()
+        .notEmpty()
+        .withMessage("Recipient address field is required."),
     issue
 )
 
