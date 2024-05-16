@@ -6,6 +6,12 @@ import Jimp from "jimp"
 import IssuedCertificate from "../models/IssuedCertificate"
 import getCurrentUserId from "../utils/getCurrentUserId"
 import { now } from "mongoose"
+import pinataSDK from "@pinata/sdk"
+
+const pinata = new pinataSDK(
+    process.env.PINATA_API_KEY,
+    process.env.PINATA_API_SECRET
+)
 
 interface Color {
     red: number
