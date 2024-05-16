@@ -5,8 +5,10 @@ import path from "path"
 import Jimp from "jimp"
 import IssuedCertificate from "../models/IssuedCertificate"
 import getCurrentUserId from "../utils/getCurrentUserId"
+import generateSlug from "../utils/generateSlug"
 import { now } from "mongoose"
-import pinataSDK from "@pinata/sdk"
+import pinataSDK, { PinataPinOptions } from "@pinata/sdk"
+import fs from "fs"
 
 const pinata = new pinataSDK(
     process.env.PINATA_API_KEY,
@@ -117,12 +119,94 @@ async function storeOnDB(
     }
 }
 
+async function pinNtfJson(
+    dirName: string,
+    fileName: string,
+    name: string,
+    description: string,
+    ipfsHash: string
+) {
+    const metadata = {
+        name: name,
+        description: description,
+        image: ipfsHash,
+    }
+
+    const jsonString = JSON.stringify(metadata)
+
+    fs.writeFileSync(`${dirName}/${fileName}-metadata.json`, jsonString)
+
+    const metadataOptions: PinataPinOptions = {
+        pinataMetadata: {
+            name: `${fileName}-metadata.json`,
+            description: `This json file is the meta data for the file ${fileName}`,
+            keyvalues: null,
+        },
+        pinataOptions: {
+            cidVersion: 0,
+        },
+    }
+
+    const resMetadata = await pinata.pinJSONToIPFS(metadata, metadataOptions)
+
+    const metadataIpfsHash = resMetadata.IpfsHash
+
+    console.log("MEtadata", resMetadata)
+
+    return `${dirName}/${fileName}-metadata.json`
+}
+
+async function pinOnIPFS(dir: string) {
+    const stream = fs.createReadStream(dir)
+
+    const dirSplit = dir.split("/")
+    const directory = dirSplit[0] + "/" + dirSplit[1]
+    const file = dirSplit[2]
+
+    const options: PinataPinOptions = {
+        pinataMetadata: {
+            name: file,
+            keyvalues: null,
+        },
+        pinataOptions: {
+            cidVersion: 0,
+        },
+    }
+
+    const res = await pinata.pinFileToIPFS(stream, options)
+
+    const ipfsHash = res.IpfsHash
+
+    const metadata = pinNtfJson(
+        directory,
+        file,
+        "Shivaji Chalise",
+        "Des",
+        ipfsHash
+    )
+}
+
 export async function issue(req: Request, res: Response) {
     const image = req.body.certificate
 
     const { recipient, address, fields } = req.body
 
-    const generated = JSON.parse(await generate(image, fields))
+    const certificatesDirectoryPath = path.join("certificates")
+    const issueDirectoryPath = path.join(
+        `certificates/${generateSlug(recipient + "-" + address)}`
+    )
+
+    if (!fs.existsSync(certificatesDirectoryPath)) {
+        fs.mkdirSync(certificatesDirectoryPath)
+    }
+
+    if (!fs.existsSync(issueDirectoryPath)) {
+        fs.mkdirSync(issueDirectoryPath)
+    }
+
+    const generated = JSON.parse(
+        await generate(image, fields, issueDirectoryPath)
+    )
 
     if (generated.status) {
         const userId = getCurrentUserId(req)!
@@ -130,6 +214,9 @@ export async function issue(req: Request, res: Response) {
         const store = await storeOnDB(userId, "qwertyuiop", recipient, address)
 
         if (store) {
+            // pin the dir with certificate to IPFS
+            pinOnIPFS(generated.image)
+
             return res.status(201).json({
                 message: "Certificate generated!",
             })
@@ -145,11 +232,7 @@ export async function issue(req: Request, res: Response) {
     }
 }
 
-async function storeOnIPFS() {
-    // api call to pinata goes here
-}
-
-async function generate(image: string, fields: Fields) {
+async function generate(image: string, fields: Fields, storeInDir: string) {
     const imagePath = path.join("uploads/", image)
     const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
     const img = await Jimp.read(imagePath)
@@ -178,11 +261,11 @@ async function generate(image: string, fields: Fields) {
     }
 
     return await img
-        .writeAsync(`certificates/certificate-${image}`)
+        .writeAsync(`${storeInDir}/certificate-${image}`)
         .then((_) => {
             return JSON.stringify({
                 status: true,
-                image: `certificate-${image}`,
+                image: `${storeInDir}/certificate-${image}`,
             })
         })
         .catch((err) => {
