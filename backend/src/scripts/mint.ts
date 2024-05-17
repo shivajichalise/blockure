@@ -24,9 +24,12 @@ const mint = async (to: string, tokenURI: string) => {
 
     let blockureTxn = await blockureContract.mintNFT(to, tokenURI)
     await blockureTxn.wait()
+
     console.log(
         `Certificate Minted! Check it out at: https://sepolia.etherscan.io/tx/${blockureTxn.hash}`
     )
+
+    return blockureTxn.hash
 }
 
 export default mint

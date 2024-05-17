@@ -98,7 +98,8 @@ async function storeOnDB(
     issuer: string,
     certificate: string,
     recipientName: string,
-    recipientAddress: string
+    recipientAddress: string,
+    transactionHash: string
 ) {
     const recipientDetails = {
         name: recipientName,
@@ -110,6 +111,7 @@ async function storeOnDB(
         issuer,
         certificate,
         recipientDetails,
+        transactionHash,
         issuedDate,
     })
 
@@ -118,44 +120,6 @@ async function storeOnDB(
     } else {
         return false
     }
-}
-
-async function pinNtfJson(
-    dirName: string,
-    fileName: string,
-    name: string,
-    description: string,
-    ipfsHash: string
-) {
-    const metadata = {
-        name: name,
-        description: description,
-        image: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
-    }
-
-    const jsonString = JSON.stringify(metadata)
-
-    fs.writeFileSync(`${dirName}/${fileName}-metadata.json`, jsonString)
-
-    const metadataOptions: PinataPinOptions = {
-        pinataMetadata: {
-            name: `${fileName}-metadata.json`,
-            description: `This json file is the meta data for the file ${fileName}`,
-            keyvalues: null,
-        },
-        pinataOptions: {
-            cidVersion: 0,
-        },
-    }
-
-    const resMetadata = await pinata.pinJSONToIPFS(metadata, metadataOptions)
-
-    console.log("JSON pIN samma aako cha")
-    console.log("JSON pIN", resMetadata)
-
-    // const metadataIpfsHash = resMetadata.IpfsHash
-    //
-    // return metadataIpfsHash
 }
 
 async function pinOnIPFS(dir: string) {
@@ -235,19 +199,25 @@ export async function issue(req: Request, res: Response) {
     )
 
     if (generated.status) {
+        // pin the dir with certificate to IPFS
+        const metadataIpfsHash = await pinOnIPFS(generated.image)
+
+        const transactionHash = await mint(
+            address,
+            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+        )
+
         const userId = getCurrentUserId(req)!
 
-        const store = await storeOnDB(userId, "qwertyuiop", recipient, address)
+        const store = await storeOnDB(
+            userId,
+            "qwertyuiop",
+            recipient,
+            address,
+            transactionHash
+        )
 
         if (store) {
-            // pin the dir with certificate to IPFS
-            const metadataIpfsHash = await pinOnIPFS(generated.image)
-
-            await mint(
-                address,
-                `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
-            )
-
             return res.status(201).json({
                 message: "Certificate generated!",
             })

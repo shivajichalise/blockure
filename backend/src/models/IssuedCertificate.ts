@@ -21,6 +21,10 @@ const issuedCertificateSchema = new mongoose.Schema(
                 required: true,
             },
         },
+        transactionHash: {
+            type: String,
+            required: false,
+        },
         issuedDate: {
             type: Date,
             required: true,
