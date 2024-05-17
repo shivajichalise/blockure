@@ -1,4 +1,13 @@
-import { Button, Card, Flex, Form, Input, Upload, UploadProps } from "antd"
+import {
+    Button,
+    Spin,
+    Card,
+    Flex,
+    Form,
+    Input,
+    Upload,
+    UploadProps,
+} from "antd"
 import CertificateInput from "./CertificateInput"
 import {
     PlusOutlined,
@@ -36,6 +45,7 @@ const CreateCertificateContent = () => {
     const [loading, setLoading] = useState(false)
     const [imageUrl, setImageUrl] = useState<string>("")
     const [imageName, setImageName] = useState<string>("")
+    const [spinning, setSpinning] = useState<boolean>(false)
 
     const handleAdd = (label: string) => {
         setFieldLabels([...fieldLabels, label])
@@ -46,6 +56,7 @@ const CreateCertificateContent = () => {
     }
 
     const submitForm = (values: any) => {
+        setSpinning(true)
         const organizedData: OrganizedData = {}
 
         if (imageUrl.length === 0) {
@@ -87,6 +98,7 @@ const CreateCertificateContent = () => {
         axiosClient
             .post("/certificates/issue", payload)
             .then(({ data }) => {
+                setSpinning(false)
                 message.success(`${data.message}`)
             })
             .catch((err) => {
@@ -94,6 +106,8 @@ const CreateCertificateContent = () => {
                 if (response && response.status === 401) {
                     console.log(response.message())
                 }
+                setSpinning(false)
+                message.success(`${response.message}`)
             })
     }
 
@@ -171,6 +185,7 @@ const CreateCertificateContent = () => {
                 marginBottom: "2rem",
             }}
         >
+            <Spin spinning={spinning} fullscreen />
             {contextHolder}
             <Modal
                 title="Enter label"
