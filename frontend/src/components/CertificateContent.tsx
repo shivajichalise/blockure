@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import { Table, Space, Card } from "antd"
 import type { TableProps } from "antd"
-import { EyeFilled, PlusSquareFilled } from "@ant-design/icons"
+import { BlockOutlined, EyeFilled, PlusSquareFilled } from "@ant-design/icons"
 import { Link } from "react-router-dom"
 import axiosClient from "../axios-client"
 
@@ -70,9 +70,18 @@ const CertificateContent: FC = () => {
         {
             title: "Action",
             key: "action",
-            render: (_, __) => (
+            render: (_, record) => (
                 <Space size="middle">
-                    <a>
+                    <a
+                        href={`https://sepolia.etherscan.io/tx/${record.transaction_hash}`}
+                        target="_blank"
+                    >
+                        <BlockOutlined />
+                    </a>
+                    <a
+                        href={`https://sepolia.etherscan.io/tx/${record.transaction_hash}`}
+                        target="_blank"
+                    >
                         <EyeFilled />
                     </a>
                 </Space>
