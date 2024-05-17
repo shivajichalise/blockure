@@ -7,9 +7,9 @@ import { Link } from "react-router-dom"
 const CertificateContent: FC = () => {
     interface DataType {
         key: string
-        issued_by: string
+        issued_to: string
         issued_on: string
-        id: string
+        address: string
     }
 
     const columns: TableProps<DataType>["columns"] = [
@@ -19,9 +19,9 @@ const CertificateContent: FC = () => {
             rowScope: "row",
         },
         {
-            title: "Issued by",
-            dataIndex: "issued_by",
-            key: "issued_by",
+            title: "Issued to",
+            dataIndex: "issued_to",
+            key: "issued_to",
         },
         {
             title: "Issued on",
@@ -29,9 +29,9 @@ const CertificateContent: FC = () => {
             key: "issued_on",
         },
         {
-            title: "Id",
-            dataIndex: "id",
-            key: "id",
+            title: "Address",
+            dataIndex: "address",
+            key: "address",
         },
         {
             title: "Action",
@@ -49,9 +49,9 @@ const CertificateContent: FC = () => {
     const data: DataType[] = [
         {
             key: "1",
-            issued_by: "John Brown",
+            issued_to: "John Brown",
             issued_on: new Date().toDateString(),
-            id: "432jnasdf43ads",
+            address: "432jnasdf43ads",
         },
     ]
 

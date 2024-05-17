@@ -3,7 +3,9 @@ import Certificate from "../models/Certificate"
 import { validationResult } from "express-validator"
 import path from "path"
 import Jimp from "jimp"
-import IssuedCertificate from "../models/IssuedCertificate"
+import IssuedCertificate, {
+    IssuedCertificateDocument,
+} from "../models/IssuedCertificate"
 import getCurrentUserId from "../utils/getCurrentUserId"
 import generateSlug from "../utils/generateSlug"
 import { now } from "mongoose"
@@ -34,8 +36,19 @@ interface Fields {
     [fieldName: string]: Field
 }
 
-export function test(_: Request, res: Response) {
-    return res.status(200).json({ message: "Certificates!" })
+export async function all(_: Request, res: Response) {
+    const issuedCertificates: IssuedCertificateDocument[] =
+        await IssuedCertificate.find({})
+
+    const formattedData = issuedCertificates.map((cert) => ({
+        issuer: cert.issuer,
+        certificate: cert.certificate,
+        issued_to: cert.issued_to,
+        issued_address: cert.issued_address,
+        transaction_hash: cert.transaction_hash,
+    }))
+
+    return res.status(200).json({ message: formattedData })
 }
 
 export async function create(req: Request, res: Response) {
@@ -101,18 +114,12 @@ async function storeOnDB(
     recipientAddress: string,
     transactionHash: string
 ) {
-    const recipientDetails = {
-        name: recipientName,
-        address: recipientAddress,
-    }
-    const issuedDate = new Date().getDate()
-
     const issued = await IssuedCertificate.create({
-        issuer,
-        certificate,
-        recipientDetails,
-        transactionHash,
-        issuedDate,
+        issuer: issuer,
+        certificate: certificate,
+        issued_to: recipientName,
+        issued_address: recipientAddress,
+        transaction_hash: transactionHash,
     })
 
     if (issued) {
@@ -202,10 +209,12 @@ export async function issue(req: Request, res: Response) {
         // pin the dir with certificate to IPFS
         const metadataIpfsHash = await pinOnIPFS(generated.image)
 
-        const transactionHash = await mint(
-            address,
-            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
-        )
+        // const transactionHash = await mint(
+        //     address,
+        //     `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+        // )
+        //
+        const transactionHash = "adsads"
 
         const userId = getCurrentUserId(req)!
 

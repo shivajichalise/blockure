@@ -1,6 +1,6 @@
 import express from "express"
 import {
-    test,
+    all,
     create,
     issue,
     upload,
@@ -10,7 +10,7 @@ import { body } from "express-validator"
 
 const router = express.Router()
 
-router.get("/", test)
+router.get("/", all)
 
 router.post("/", handleUpload.single("image"), create)
 

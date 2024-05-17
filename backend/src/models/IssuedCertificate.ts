@@ -1,6 +1,14 @@
 import mongoose from "mongoose"
 
-const issuedCertificateSchema = new mongoose.Schema(
+export interface IssuedCertificateDocument extends Document {
+    issuer: mongoose.Schema.Types.ObjectId
+    certificate: string
+    issued_to: string
+    issued_address: string
+    transaction_hash: string
+}
+
+const issuedCertificateSchema = new mongoose.Schema<IssuedCertificateDocument>(
     {
         issuer: {
             type: mongoose.Schema.Types.ObjectId,
@@ -11,23 +19,17 @@ const issuedCertificateSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        recipientDetails: {
-            name: {
-                type: String,
-                required: true,
-            },
-            address: {
-                type: String,
-                required: true,
-            },
+        issued_to: {
+            type: String,
+            required: true,
         },
-        transactionHash: {
+        issued_address: {
+            type: String,
+            required: true,
+        },
+        transaction_hash: {
             type: String,
             required: false,
-        },
-        issuedDate: {
-            type: Date,
-            required: true,
         },
     },
     {
