@@ -1,16 +1,40 @@
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import { Table, Space, Card } from "antd"
 import type { TableProps } from "antd"
 import { EyeFilled, PlusSquareFilled } from "@ant-design/icons"
 import { Link } from "react-router-dom"
+import axiosClient from "../axios-client"
+
+interface DataType {
+    key: string
+    issuer: string
+    certificate: string
+    issued_to: string
+    issued_address: string
+    transaction_hash: string
+}
 
 const CertificateContent: FC = () => {
-    interface DataType {
-        key: string
-        issued_to: string
-        issued_on: string
-        address: string
+    const [data, setData] = useState<DataType[]>([])
+
+    function fetchData() {
+        axiosClient
+            .get("/certificates")
+            .then(({ data }) => {
+                console.log(data)
+                setData(data.certificates)
+            })
+            .catch((err) => {
+                const response = err.response
+                if (response && response.status === 403) {
+                    console.error(response.data.data)
+                }
+            })
     }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     const columns: TableProps<DataType>["columns"] = [
         {
@@ -19,19 +43,29 @@ const CertificateContent: FC = () => {
             rowScope: "row",
         },
         {
+            title: "Issuer",
+            dataIndex: "issuer",
+            key: "issuer",
+        },
+        {
+            title: "Certificate",
+            dataIndex: "certificate",
+            key: "certificate",
+        },
+        {
             title: "Issued to",
             dataIndex: "issued_to",
             key: "issued_to",
         },
         {
-            title: "Issued on",
-            dataIndex: "issued_on",
-            key: "issued_on",
+            title: "Issued address",
+            dataIndex: "issued_address",
+            key: "issued_address",
         },
         {
-            title: "Address",
-            dataIndex: "address",
-            key: "address",
+            title: "Transaction Hash",
+            dataIndex: "transaction_hash",
+            key: "transaction_hash",
         },
         {
             title: "Action",
@@ -43,15 +77,6 @@ const CertificateContent: FC = () => {
                     </a>
                 </Space>
             ),
-        },
-    ]
-
-    const data: DataType[] = [
-        {
-            key: "1",
-            issued_to: "John Brown",
-            issued_on: new Date().toDateString(),
-            address: "432jnasdf43ads",
         },
     ]
 

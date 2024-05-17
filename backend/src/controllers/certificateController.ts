@@ -12,6 +12,7 @@ import { now } from "mongoose"
 import pinataSDK, { PinataPinOptions } from "@pinata/sdk"
 import fs from "fs"
 import mint from "../scripts/mint"
+import { UserDocument } from "../models/User"
 
 const pinata = new pinataSDK(
     process.env.PINATA_API_KEY,
@@ -37,18 +38,21 @@ interface Fields {
 }
 
 export async function all(_: Request, res: Response) {
-    const issuedCertificates: IssuedCertificateDocument[] =
-        await IssuedCertificate.find({})
+    const issuedCertificates = await IssuedCertificate.find({}).populate<{
+        issuer: UserDocument
+    }>("issuer", "name")
 
+    let sn = 1
     const formattedData = issuedCertificates.map((cert) => ({
-        issuer: cert.issuer,
+        key: sn++,
+        issuer: cert.issuer.name,
         certificate: cert.certificate,
         issued_to: cert.issued_to,
         issued_address: cert.issued_address,
         transaction_hash: cert.transaction_hash,
     }))
 
-    return res.status(200).json({ message: formattedData })
+    return res.status(200).json({ certificates: formattedData })
 }
 
 export async function create(req: Request, res: Response) {
