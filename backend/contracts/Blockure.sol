@@ -14,10 +14,24 @@ contract Blockure is ERC721, ERC721URIStorage, Ownable {
     Ownable(initialOwner)
     {}
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _nextTokenId++;
+    function safeMint(address to, uint256 tokenId, string memory uri)
+        public
+        onlyOwner
+    {
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+    }
+
+    function mintNFT(address recipient, string memory uri) public onlyOwner returns(uint256) {
+
+        _nextTokenId += 1;
+
+        uint256 newItemId = _nextTokenId;
+        _mint(recipient, newItemId);
+        _setTokenURI(newItemId, uri);
+
+        return newItemId;
+
     }
 
     // _beforeTokenTransfer method is a hook that is called before any token transfer

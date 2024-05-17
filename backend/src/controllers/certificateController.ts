@@ -9,6 +9,7 @@ import generateSlug from "../utils/generateSlug"
 import { now } from "mongoose"
 import pinataSDK, { PinataPinOptions } from "@pinata/sdk"
 import fs from "fs"
+import mint from "../scripts/mint"
 
 const pinata = new pinataSDK(
     process.env.PINATA_API_KEY,
@@ -129,7 +130,7 @@ async function pinNtfJson(
     const metadata = {
         name: name,
         description: description,
-        image: ipfsHash,
+        image: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
     }
 
     const jsonString = JSON.stringify(metadata)
@@ -149,11 +150,12 @@ async function pinNtfJson(
 
     const resMetadata = await pinata.pinJSONToIPFS(metadata, metadataOptions)
 
-    const metadataIpfsHash = resMetadata.IpfsHash
+    console.log("JSON pIN samma aako cha")
+    console.log("JSON pIN", resMetadata)
 
-    console.log("MEtadata", resMetadata)
-
-    return `${dirName}/${fileName}-metadata.json`
+    // const metadataIpfsHash = resMetadata.IpfsHash
+    //
+    // return metadataIpfsHash
 }
 
 async function pinOnIPFS(dir: string) {
@@ -177,13 +179,37 @@ async function pinOnIPFS(dir: string) {
 
     const ipfsHash = res.IpfsHash
 
-    const metadata = pinNtfJson(
-        directory,
-        file,
-        "Shivaji Chalise",
-        "Des",
-        ipfsHash
-    )
+    const metadata = {
+        name: "Name",
+        description: "des",
+        image: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
+    }
+
+    // const jsonString = JSON.stringify(metadata)
+
+    // fs.writeFileSync(`${directory}/${file}-metadata.json`, jsonString)
+
+    const metadataOptions: PinataPinOptions = {
+        pinataMetadata: {
+            name: `${file}-metadata.json`,
+            description: `This json file is the meta data for the file ${file}`,
+            keyvalues: null,
+        },
+        pinataOptions: {
+            cidVersion: 0,
+        },
+    }
+
+    try {
+        const resMetadata = await pinata.pinJSONToIPFS(
+            metadata,
+            metadataOptions
+        )
+
+        return resMetadata.IpfsHash
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 export async function issue(req: Request, res: Response) {
@@ -215,7 +241,12 @@ export async function issue(req: Request, res: Response) {
 
         if (store) {
             // pin the dir with certificate to IPFS
-            pinOnIPFS(generated.image)
+            const metadataIpfsHash = await pinOnIPFS(generated.image)
+
+            await mint(
+                address,
+                `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+            )
 
             return res.status(201).json({
                 message: "Certificate generated!",
