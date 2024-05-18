@@ -241,6 +241,176 @@ export async function issue(req: Request, res: Response) {
     }
 }
 
+export async function issueTemplate(req: Request, res: Response) {
+    const templatePath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "src",
+        "assets",
+        "certificate_template.png"
+    )
+    const {
+        certificate_type,
+        recipient_name,
+        recipient_address,
+        certificate_text,
+    } = req.body
+
+    const certificatesDirectoryPath = path.join("certificates")
+    const issueDirectoryPath = path.join(
+        `certificates/${generateSlug(recipient_name + "-" + recipient_address)}`
+    )
+
+    if (!fs.existsSync(certificatesDirectoryPath)) {
+        fs.mkdirSync(certificatesDirectoryPath)
+    }
+
+    if (!fs.existsSync(issueDirectoryPath)) {
+        fs.mkdirSync(issueDirectoryPath)
+    }
+
+    const generated = JSON.parse(
+        await generateFromTemplate(
+            templatePath,
+            certificate_type,
+            recipient_name,
+            recipient_address,
+            certificate_text,
+            issueDirectoryPath
+        )
+    )
+
+    console.log(generated)
+
+    // if (generated.status) {
+    //     // pin the dir with certificate to IPFS
+    //     const metadataIpfsHash = await pinOnIPFS(generated.image, recipient)
+    //
+    //     const transactionHash = await mint(
+    //         address,
+    //         `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+    //     )
+    //
+    //     const userId = getCurrentUserId(req)!
+    //
+    //     const store = await storeOnDB(
+    //         userId,
+    //         generated.image,
+    //         recipient,
+    //         address,
+    //         transactionHash
+    //     )
+    //
+    //     if (store) {
+    //         return res.status(201).json({
+    //             message: "Certificate generated!",
+    //         })
+    //     } else {
+    //         return res
+    //             .status(400)
+    //             .json({ messgae: "Certificate generation failed." })
+    //     }
+    // } else {
+    //     return res
+    //         .status(500)
+    //         .json({ messgae: "Certificate generation failed." })
+    // }
+}
+
+async function generateFromTemplate(
+    template: string,
+    certificate_type: string,
+    recipient_name: string,
+    recipient_address: string,
+    certificate_text: string,
+    issueDirectoryPath: string
+) {
+    const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
+    const img = await Jimp.read(template)
+
+    const templateValues = [
+        {
+            certificate_type: certificate_type,
+            x: 0,
+            y: 0,
+            angle: 0,
+            color: "#ff0000",
+        },
+        {
+            recipient_name: recipient_name,
+            x: 0,
+            y: 50,
+            angle: 0,
+            color: "#ff0000",
+        },
+        {
+            recipient_address: recipient_address,
+            x: 0,
+            y: 70,
+            angle: 0,
+            color: "#ff0000",
+        },
+        {
+            certificate_text: certificate_text,
+            x: 0,
+            y: 90,
+            angle: 0,
+            color: "#ff0000",
+        },
+    ]
+
+    for (const value of templateValues) {
+        const keys = Object.keys(value) // Get all keys of the current object
+        const firstKey = keys[0] // Get the first key
+
+        const val = value[firstKey as keyof typeof value] // Get the value corresponding to the first key
+        const { x, y, angle, color } = value // Destructure the rest of the properties
+
+        const xInt = typeof x === "string" ? parseInt(x, 10) : x
+        const yInt = typeof y === "string" ? parseInt(y, 10) : y
+        const angleInt = typeof angle === "string" ? parseInt(angle, 10) : angle
+
+        let textImage = await Jimp.create(
+            img.bitmap.width,
+            img.bitmap.height,
+            "#FF00FF"
+        )
+
+        textImage.print(font, 0, 0, val)
+        textImage.color([
+            // @ts-ignore
+            { apply: "xor", params: [color] },
+        ])
+
+        if (angleInt !== 0) {
+            textImage.rotate(angleInt)
+            img.blit(textImage, 0, 0)
+        } else {
+            img.blit(textImage, xInt, yInt)
+        }
+    }
+
+    const recipient_name_slug = generateSlug(recipient_name)
+
+    return await img
+        .writeAsync(
+            `${issueDirectoryPath}/certificate-${recipient_name_slug}-${recipient_address}.png`
+        )
+        .then((_) => {
+            return JSON.stringify({
+                status: true,
+                image: `${issueDirectoryPath}/certificate-${recipient_name_slug}-${recipient_address}.png`,
+            })
+        })
+        .catch((err) => {
+            return JSON.stringify({
+                status: false,
+                error: err,
+            })
+        })
+}
+
 async function generate(image: string, fields: Fields, storeInDir: string) {
     const imagePath = path.join("uploads/", image)
     const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)

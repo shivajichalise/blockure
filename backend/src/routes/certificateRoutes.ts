@@ -3,6 +3,7 @@ import {
     all,
     create,
     issue,
+    issueTemplate,
     upload,
 } from "../controllers/certificateController"
 import handleUpload from "../utils/multer"
@@ -116,6 +117,35 @@ router.post(
         .notEmpty()
         .withMessage("Recipient address field is required."),
     issue
+)
+
+router.post(
+    "/issue/template",
+    [
+        body("certificate_type")
+            .trim()
+            .notEmpty()
+            .withMessage("Certificate type field is required."),
+    ],
+    [
+        body("recipient_name")
+            .trim()
+            .notEmpty()
+            .withMessage("Recipient name field is required."),
+    ],
+    [
+        body("recipient_address")
+            .trim()
+            .notEmpty()
+            .withMessage("Recipient address field is required."),
+    ],
+    [
+        body("certificate_text")
+            .trim()
+            .notEmpty()
+            .withMessage("Certificate text field is required."),
+    ],
+    issueTemplate
 )
 
 export default router
