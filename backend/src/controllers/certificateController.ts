@@ -3,12 +3,9 @@ import Certificate from "../models/Certificate"
 import { validationResult } from "express-validator"
 import path from "path"
 import Jimp from "jimp"
-import IssuedCertificate, {
-    IssuedCertificateDocument,
-} from "../models/IssuedCertificate"
+import IssuedCertificate from "../models/IssuedCertificate"
 import getCurrentUserId from "../utils/getCurrentUserId"
 import generateSlug from "../utils/generateSlug"
-import { now } from "mongoose"
 import pinataSDK, { PinataPinOptions } from "@pinata/sdk"
 import fs from "fs"
 import mint from "../scripts/mint"
@@ -133,7 +130,7 @@ async function storeOnDB(
     }
 }
 
-async function pinOnIPFS(dir: string) {
+async function pinOnIPFS(dir: string, name: string) {
     const stream = fs.createReadStream(dir)
 
     const dirSplit = dir.split("/")
@@ -155,8 +152,8 @@ async function pinOnIPFS(dir: string) {
     const ipfsHash = res.IpfsHash
 
     const metadata = {
-        name: "Name",
-        description: "des",
+        name: name,
+        description: `Certificate issued to ${name}`,
         image: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
     }
 
@@ -211,20 +208,18 @@ export async function issue(req: Request, res: Response) {
 
     if (generated.status) {
         // pin the dir with certificate to IPFS
-        const metadataIpfsHash = await pinOnIPFS(generated.image)
+        const metadataIpfsHash = await pinOnIPFS(generated.image, recipient)
 
-        // const transactionHash = await mint(
-        //     address,
-        //     `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
-        // )
-        //
-        const transactionHash = "adsads"
+        const transactionHash = await mint(
+            address,
+            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+        )
 
         const userId = getCurrentUserId(req)!
 
         const store = await storeOnDB(
             userId,
-            "qwertyuiop",
+            generated.image,
             recipient,
             address,
             transactionHash
