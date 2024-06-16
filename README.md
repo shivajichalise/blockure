@@ -33,4 +33,4 @@ harnessing the power of blockchain technology to bring trust and transparency to
 
 ---
 
-Has been deployed in Sepolia Test net. Address is: 0xed463268b333F14CDe51FE8418003A7A2D483Bb1
+Has been deployed in Sepolia Test net. Address is: 0x383aEB787F521f587B6419F85Fd69b3717dCFa24

@@ -11,19 +11,32 @@ const provider = new ethers.AlchemyProvider("sepolia", ALCHEMY_API_KEY)
 const signer = new ethers.Wallet(METAMASK_PRIVATE_KEY, provider)
 
 const abi = contract.abi
-const contractAddress = "0xed463268b333F14CDe51FE8418003A7A2D483Bb1"
+const contractAddress = "0x383aEB787F521f587B6419F85Fd69b3717dCFa24"
 
 const blockureContract = new ethers.Contract(contractAddress, abi, signer)
 
 // Call mint function
-const mint = async (to: string, tokenURI: string) => {
-    console.log("Aako cha")
-
-    console.log("To address:", to)
-    console.log("URL:", tokenURI)
-
-    let blockureTxn = await blockureContract.mintNFT(to, tokenURI)
+const mint = async (
+    recipient_name: string,
+    recipient_address: string,
+    issuer_address: string,
+    tokenURI: string
+) => {
+    let blockureTxn = await blockureContract.mintNFT(
+        recipient_address,
+        tokenURI
+    )
     await blockureTxn.wait()
+
+    let generateCertificate = await blockureContract.generateCertificate(
+        blockureTxn.hash,
+        recipient_name,
+        recipient_address,
+        issuer_address,
+        Date.now()
+    )
+
+    await generateCertificate.wait()
 
     console.log(
         `Certificate Minted! Check it out at: https://sepolia.etherscan.io/tx/${blockureTxn.hash}`
@@ -32,4 +45,16 @@ const mint = async (to: string, tokenURI: string) => {
     return blockureTxn.hash
 }
 
-export default mint
+const getCertificateData = async (transaction_hash: string) => {
+    let blockureTxn = await blockureContract.getCertificateData(
+        transaction_hash
+    )
+
+    await blockureTxn.wait()
+
+    console.log(`Certificate Fetched!`, blockureTxn)
+
+    return blockureTxn
+}
+
+export { mint, getCertificateData }

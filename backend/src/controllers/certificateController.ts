@@ -8,7 +8,7 @@ import getCurrentUserId from "../utils/getCurrentUserId"
 import generateSlug from "../utils/generateSlug"
 import pinataSDK, { PinataPinOptions } from "@pinata/sdk"
 import fs from "fs"
-import mint from "../scripts/mint"
+import { getCertificateData, mint } from "../scripts/mint"
 import { UserDocument } from "../models/User"
 import "dotenv/config"
 
@@ -212,7 +212,9 @@ export async function issue(req: Request, res: Response) {
         const metadataIpfsHash = await pinOnIPFS(generated.image, recipient)
 
         const transactionHash = await mint(
+            recipient,
             address,
+            process.env.OWNER_ADDRESS!,
             `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
         )
 
@@ -285,39 +287,44 @@ export async function issueTemplate(req: Request, res: Response) {
 
     console.log(generated)
 
-    // if (generated.status) {
-    //     // pin the dir with certificate to IPFS
-    //     const metadataIpfsHash = await pinOnIPFS(generated.image, recipient)
-    //
-    //     const transactionHash = await mint(
-    //         address,
-    //         `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
-    //     )
-    //
-    //     const userId = getCurrentUserId(req)!
-    //
-    //     const store = await storeOnDB(
-    //         userId,
-    //         generated.image,
-    //         recipient,
-    //         address,
-    //         transactionHash
-    //     )
-    //
-    //     if (store) {
-    //         return res.status(201).json({
-    //             message: "Certificate generated!",
-    //         })
-    //     } else {
-    //         return res
-    //             .status(400)
-    //             .json({ messgae: "Certificate generation failed." })
-    //     }
-    // } else {
-    //     return res
-    //         .status(500)
-    //         .json({ messgae: "Certificate generation failed." })
-    // }
+    if (generated.status) {
+        // pin the dir with certificate to IPFS
+        const metadataIpfsHash = await pinOnIPFS(
+            generated.image,
+            recipient_name
+        )
+
+        const transactionHash = await mint(
+            recipient_name,
+            recipient_address,
+            process.env.OWNER_ADDRESS!,
+            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+        )
+
+        const userId = getCurrentUserId(req)!
+
+        const store = await storeOnDB(
+            userId,
+            generated.image,
+            recipient_name,
+            recipient_address,
+            transactionHash
+        )
+
+        if (store) {
+            return res.status(201).json({
+                message: "Certificate generated!",
+            })
+        } else {
+            return res
+                .status(400)
+                .json({ messgae: "Certificate generation failed." })
+        }
+    } else {
+        return res
+            .status(500)
+            .json({ messgae: "Certificate generation failed." })
+    }
 }
 
 async function generateFromTemplate(
@@ -545,4 +552,9 @@ export async function upload(req: Request, res: Response) {
     return res
         .status(201)
         .json({ message: "Certificate uploaded!", certificate: image })
+}
+
+export async function getCertificateFromBlockchain(transactionHash: string) {
+    const certificateData = getCertificateData(transactionHash)
+    console.log("Certificate data: ", certificateData)
 }
