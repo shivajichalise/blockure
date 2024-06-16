@@ -5,7 +5,7 @@ import { Empty } from "antd"
 import axiosClient from "../axios-client"
 import InputText from "./InputText"
 import InputSelect from "./InputSelect"
-import template from "../assets/certificate_template.png"
+import template from "../assets/blockure_certificate_template.png"
 import InputTextArea from "./InputTextArea"
 
 const { TextArea } = Input
@@ -26,14 +26,17 @@ const CreateTemplateCertificate = () => {
         setSpinning(true)
 
         const payload = {
-            address: values["address"],
-            recipient: values["recipient"],
+            recipient_name: values["recipient_name"],
+            recipient_address: values["recipient_address"],
+            certificate_type: values["certificate_type"],
+            certificate_text: values["certificate_text"],
         }
 
         axiosClient
-            .post("/certificates/issue", payload)
+            .post("/certificates/issue/template", payload)
             .then(({ data }) => {
                 setSpinning(false)
+                console.log("SUCCESS", data)
                 message.success(`${data.message}`)
             })
             .catch((err) => {
@@ -96,21 +99,21 @@ const CreateTemplateCertificate = () => {
                             <InputText
                                 label="Recipient name"
                                 placeholder="Recipient name"
-                                name="recipient"
+                                name="recipient_name"
                             />
 
                             <InputText
                                 label="Recipient address"
                                 placeholder="Recipient address"
-                                name="address"
+                                name="recipient_address"
                             />
 
                             <InputTextArea
-                                name="text"
+                                name="certificate_text"
                                 label="Certificate text"
                                 rows={4}
                                 placeholder="Certificate text"
-                                maxLength={50}
+                                maxLength={144}
                             />
 
                             <Button type="primary" htmlType="submit" block>

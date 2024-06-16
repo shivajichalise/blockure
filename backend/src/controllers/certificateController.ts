@@ -10,6 +10,7 @@ import pinataSDK, { PinataPinOptions } from "@pinata/sdk"
 import fs from "fs"
 import mint from "../scripts/mint"
 import { UserDocument } from "../models/User"
+import "dotenv/config"
 
 const pinata = new pinataSDK(
     process.env.PINATA_API_KEY,
@@ -248,8 +249,9 @@ export async function issueTemplate(req: Request, res: Response) {
         "..",
         "src",
         "assets",
-        "certificate_template.png"
+        "blockure_certificate_template.png"
     )
+
     const {
         certificate_type,
         recipient_name,
@@ -326,37 +328,88 @@ async function generateFromTemplate(
     certificate_text: string,
     issueDirectoryPath: string
 ) {
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
+    const issuer_address = process.env.OWNER_ADDRESS
+
+    const monaSansFont32 = await Jimp.loadFont("fonts/monasans-32/monasans.fnt")
+    const monaSansFont20 = await Jimp.loadFont("fonts/monasans-20/monasans.fnt")
+    const monaSansFont14 = await Jimp.loadFont("fonts/monasans-14/monasans.fnt")
+    const cookieFont56 = await Jimp.loadFont("fonts/cookie-56/cookie.fnt")
+
     const img = await Jimp.read(template)
+
+    let recipient_name_coordinates = { x: 280, y: 370 }
+
+    if (recipient_name.length <= 30) {
+        recipient_name_coordinates = { x: 280, y: 370 }
+    }
+
+    if (recipient_name.length <= 20) {
+        recipient_name_coordinates = { x: 370, y: 370 }
+    }
+
+    if (recipient_name.length <= 10) {
+        recipient_name_coordinates = { x: 450, y: 370 }
+    }
 
     const templateValues = [
         {
             certificate_type: certificate_type,
-            x: 0,
-            y: 0,
+            x: 420,
+            y: 188,
             angle: 0,
-            color: "#ff0000",
+            color: "#6D6FF3",
+            font: monaSansFont32,
+            width: img.bitmap.width,
+            height: img.bitmap.height,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
+            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
         },
         {
             recipient_name: recipient_name,
-            x: 0,
-            y: 50,
+            ...recipient_name_coordinates,
             angle: 0,
-            color: "#ff0000",
+            color: "#6D6FF3",
+            font: cookieFont56,
+            width: img.bitmap.width,
+            height: img.bitmap.height,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
+            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
         },
         {
             recipient_address: recipient_address,
-            x: 0,
-            y: 70,
+            x: 140,
+            y: 690,
             angle: 0,
-            color: "#ff0000",
+            color: "#6D6FF3",
+            font: monaSansFont14,
+            width: img.bitmap.width,
+            height: img.bitmap.height,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
+            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
         },
         {
             certificate_text: certificate_text,
-            x: 0,
-            y: 90,
+            x: 210,
+            y: 505,
             angle: 0,
-            color: "#ff0000",
+            color: "#8E8E8E",
+            font: monaSansFont20,
+            width: 620,
+            height: 125,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+        },
+        {
+            issuer_address: issuer_address,
+            x: 630,
+            y: 690,
+            angle: 0,
+            color: "#6D6FF3",
+            font: monaSansFont14,
+            width: img.bitmap.width,
+            height: img.bitmap.height,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
+            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
         },
     ]
 
@@ -365,19 +418,36 @@ async function generateFromTemplate(
         const firstKey = keys[0] // Get the first key
 
         const val = value[firstKey as keyof typeof value] // Get the value corresponding to the first key
-        const { x, y, angle, color } = value // Destructure the rest of the properties
+        const {
+            x,
+            y,
+            angle,
+            color,
+            font,
+            width,
+            height,
+            alignmentX,
+            alignmentY,
+        } = value // Destructure the rest of the properties
 
         const xInt = typeof x === "string" ? parseInt(x, 10) : x
         const yInt = typeof y === "string" ? parseInt(y, 10) : y
         const angleInt = typeof angle === "string" ? parseInt(angle, 10) : angle
 
-        let textImage = await Jimp.create(
-            img.bitmap.width,
-            img.bitmap.height,
-            "#FF00FF"
-        )
+        let textImage = await Jimp.create(width, height)
 
-        textImage.print(font, 0, 0, val)
+        textImage.print(
+            font,
+            0,
+            0,
+            {
+                text: val,
+                alignmentX: alignmentX,
+                alignmentY: alignmentY,
+            },
+            width,
+            height
+        )
         textImage.color([
             // @ts-ignore
             { apply: "xor", params: [color] },
