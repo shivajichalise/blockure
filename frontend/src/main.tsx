@@ -14,6 +14,7 @@ import UserContent from "./components/UserContent.tsx"
 import CertificateContent from "./components/CertificateContent.tsx"
 import HomeContent from "./components/HomeContent.tsx"
 import CreateCertificateContent from "./components/CreateCertificateContent.tsx"
+import VerifyCertificate from "./components/VerifyCertificate.tsx"
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
         element: (
             <Dashboard>
                 <CreateCertificateContent />
+            </Dashboard>
+        ),
+    },
+    {
+        path: "/certificates/verify",
+        element: (
+            <Dashboard>
+                <VerifyCertificate />
             </Dashboard>
         ),
     },
