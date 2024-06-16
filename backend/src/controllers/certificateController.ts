@@ -554,7 +554,16 @@ export async function upload(req: Request, res: Response) {
         .json({ message: "Certificate uploaded!", certificate: image })
 }
 
-export async function getCertificateFromBlockchain(transactionHash: string) {
-    const certificateData = getCertificateData(transactionHash)
+async function getCertificateFromBlockchain(transactionHash: string) {
+    const certificateData = await getCertificateData(transactionHash)
+    return certificateData
+}
+
+export async function verify(req: Request, res: Response) {
+    const { transactionHash } = req.body
+    console.log("HASH RECEIVED:", transactionHash)
+
+    const certificateData = await getCertificateFromBlockchain(transactionHash)
     console.log("Certificate data: ", certificateData)
+    return res.status(200).json({ message: "Hello, World!" })
 }

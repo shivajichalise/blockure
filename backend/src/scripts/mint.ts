@@ -50,8 +50,6 @@ const getCertificateData = async (transaction_hash: string) => {
         transaction_hash
     )
 
-    await blockureTxn.wait()
-
     console.log(`Certificate Fetched!`, blockureTxn)
 
     return blockureTxn

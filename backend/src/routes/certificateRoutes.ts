@@ -5,6 +5,7 @@ import {
     issue,
     issueTemplate,
     upload,
+    verify,
 } from "../controllers/certificateController"
 import handleUpload from "../utils/multer"
 import { body } from "express-validator"
@@ -147,5 +148,7 @@ router.post(
     ],
     issueTemplate
 )
+
+router.post("/verify", verify)
 
 export default router
