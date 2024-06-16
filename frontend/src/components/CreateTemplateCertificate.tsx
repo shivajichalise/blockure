@@ -1,14 +1,12 @@
-import { Button, Spin, Card, Flex, Form, Input } from "antd"
+import { Button, Spin, Card, Flex, Form } from "antd"
 import { useState } from "react"
 import { message } from "antd"
 import { Empty } from "antd"
 import axiosClient from "../axios-client"
 import InputText from "./InputText"
 import InputSelect from "./InputSelect"
-import template from "../assets/blockure_certificate_template.png"
+import template from "../assets/certificate_template.png"
 import InputTextArea from "./InputTextArea"
-
-const { TextArea } = Input
 
 const CreateTemplateCertificate = () => {
     const [form] = Form.useForm()
@@ -70,7 +68,6 @@ const CreateTemplateCertificate = () => {
             <Flex
                 justify="space-around"
                 align="center"
-                wrap="wrap"
                 style={{ width: "95%" }}
             >
                 <Flex
@@ -127,7 +124,7 @@ const CreateTemplateCertificate = () => {
                     align="center"
                     style={{
                         width: "45%",
-                        height: "auto",
+                        height: "100%",
                         border: "1px solid #B7B7B7",
                         borderRadius: 10,
                     }}
@@ -138,7 +135,6 @@ const CreateTemplateCertificate = () => {
                             alt="Certificate Template"
                             style={{
                                 width: "100%",
-                                height: "100%",
                                 borderRadius: 10,
                                 objectFit: "cover",
                             }}
