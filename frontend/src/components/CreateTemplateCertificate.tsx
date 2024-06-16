@@ -60,89 +60,66 @@ const CreateTemplateCertificate = () => {
             align="center"
             style={{
                 width: "100%",
-                marginBottom: "2rem",
             }}
         >
-            <Spin spinning={spinning} fullscreen />
             {contextHolder}
-            <Flex
-                justify="space-around"
-                align="center"
-                style={{ width: "95%" }}
-            >
-                <Flex
-                    className="glass2"
-                    justify="center"
-                    align="center"
+            <Spin spinning={spinning} fullscreen />
+            <Flex align="center" style={{ width: "95%", padding: "5px" }}>
+                <Card
+                    title="Enter template details"
                     style={{
                         width: "50%",
+                        margin: "0 10px 0 0",
+                        background: "rgba(0,0,0,0)",
                     }}
                 >
-                    <Card
-                        title="Enter template details"
-                        style={{
-                            width: "100%",
-                            background: "rgba(0,0,0,0)",
-                        }}
-                    >
-                        <Form form={form} onFinish={submitForm}>
-                            <InputSelect
-                                label="Certificate type"
-                                placeholder="Select certificate type"
-                                name="certificate_type"
-                                options={certificateTypes}
-                            />
-
-                            <InputText
-                                label="Recipient name"
-                                placeholder="Recipient name"
-                                name="recipient_name"
-                            />
-
-                            <InputText
-                                label="Recipient address"
-                                placeholder="Recipient address"
-                                name="recipient_address"
-                            />
-
-                            <InputTextArea
-                                name="certificate_text"
-                                label="Certificate text"
-                                rows={4}
-                                placeholder="Certificate text"
-                                maxLength={144}
-                            />
-
-                            <Button type="primary" htmlType="submit" block>
-                                Create
-                            </Button>
-                        </Form>
-                    </Card>
-                </Flex>
-                <Flex
-                    justify="center"
-                    align="center"
-                    style={{
-                        width: "45%",
-                        height: "100%",
-                        border: "1px solid #B7B7B7",
-                        borderRadius: 10,
-                    }}
-                >
-                    {template ? (
-                        <img
-                            src={template}
-                            alt="Certificate Template"
-                            style={{
-                                width: "100%",
-                                borderRadius: 10,
-                                objectFit: "cover",
-                            }}
+                    <Form form={form} onFinish={submitForm}>
+                        <InputSelect
+                            label="Certificate type"
+                            placeholder="Select certificate type"
+                            name="certificate_type"
+                            options={certificateTypes}
                         />
-                    ) : (
-                        <Empty description={false} />
-                    )}
-                </Flex>
+
+                        <InputText
+                            label="Recipient name"
+                            placeholder="Recipient name"
+                            name="recipient_name"
+                        />
+
+                        <InputText
+                            label="Recipient address"
+                            placeholder="Recipient address"
+                            name="recipient_address"
+                        />
+
+                        <InputTextArea
+                            name="certificate_text"
+                            label="Certificate text"
+                            rows={4}
+                            placeholder="Certificate text"
+                            maxLength={144}
+                        />
+
+                        <Button type="primary" htmlType="submit" block>
+                            Create
+                        </Button>
+                    </Form>
+                </Card>
+                {template ? (
+                    <img
+                        src={template}
+                        alt="Certificate Template"
+                        style={{
+                            width: "50%",
+                            height: "50%",
+                            borderRadius: 10,
+                            objectFit: "cover",
+                        }}
+                    />
+                ) : (
+                    <Empty description={false} />
+                )}
             </Flex>
         </Flex>
     )
