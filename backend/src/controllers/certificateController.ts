@@ -179,7 +179,13 @@ async function pinOnIPFS(dir: string, name: string) {
             metadataOptions
         )
 
-        return resMetadata.IpfsHash
+        const returnData = {
+            ipfsHash: resMetadata.IpfsHash,
+            imageURL: `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
+        }
+
+        return returnData
+        // return resMetadata.IpfsHash
     } catch (err) {
         console.error(err)
     }
@@ -209,13 +215,16 @@ export async function issue(req: Request, res: Response) {
 
     if (generated.status) {
         // pin the dir with certificate to IPFS
-        const metadataIpfsHash = await pinOnIPFS(generated.image, recipient)
+        const pinData = await pinOnIPFS(generated.image, recipient)
+        const metadataIpfsHash = pinData?.ipfsHash
+        const imageURL = pinData?.imageURL
 
         const transactionHash = await mint(
             recipient,
             address,
             process.env.OWNER_ADDRESS!,
-            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`,
+            imageURL!
         )
 
         const userId = getCurrentUserId(req)!
@@ -289,16 +298,16 @@ export async function issueTemplate(req: Request, res: Response) {
 
     if (generated.status) {
         // pin the dir with certificate to IPFS
-        const metadataIpfsHash = await pinOnIPFS(
-            generated.image,
-            recipient_name
-        )
+        const pinData = await pinOnIPFS(generated.image, recipient_name)
+        const metadataIpfsHash = pinData?.ipfsHash
+        const imageURL = pinData?.imageURL
 
         const transactionHash = await mint(
             recipient_name,
             recipient_address,
             process.env.OWNER_ADDRESS!,
-            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
+            `https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`,
+            imageURL!
         )
 
         const userId = getCurrentUserId(req)!
@@ -561,9 +570,22 @@ async function getCertificateFromBlockchain(transactionHash: string) {
 
 export async function verify(req: Request, res: Response) {
     const { transactionHash } = req.body
-    console.log("HASH RECEIVED:", transactionHash)
 
-    const certificateData = await getCertificateFromBlockchain(transactionHash)
-    console.log("Certificate data: ", certificateData)
-    return res.status(200).json({ message: "Hello, World!" })
+    try {
+        const certificateData = await getCertificateFromBlockchain(
+            transactionHash
+        )
+        return res.status(200).json({
+            data: {
+                recipient_name: certificateData[0],
+                recipient_address: certificateData[1],
+                issuer_address: certificateData[2],
+                // issued_date: certificateData[3],
+                token_uri: certificateData[4],
+                image_url: certificateData[5],
+            },
+        })
+    } catch (err) {
+        return res.status(200).json({ error: err })
+    }
 }

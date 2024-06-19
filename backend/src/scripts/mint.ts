@@ -11,7 +11,7 @@ const provider = new ethers.AlchemyProvider("sepolia", ALCHEMY_API_KEY)
 const signer = new ethers.Wallet(METAMASK_PRIVATE_KEY, provider)
 
 const abi = contract.abi
-const contractAddress = "0x383aEB787F521f587B6419F85Fd69b3717dCFa24"
+const contractAddress = "0x4E41E93b3d72BB1E0b521C744BB57cBBa1a4A2B8"
 
 const blockureContract = new ethers.Contract(contractAddress, abi, signer)
 
@@ -20,7 +20,8 @@ const mint = async (
     recipient_name: string,
     recipient_address: string,
     issuer_address: string,
-    tokenURI: string
+    tokenURI: string,
+    imageURL: string
 ) => {
     let blockureTxn = await blockureContract.mintNFT(
         recipient_address,
@@ -33,7 +34,9 @@ const mint = async (
         recipient_name,
         recipient_address,
         issuer_address,
-        Date.now()
+        Date.now(),
+        tokenURI,
+        imageURL
     )
 
     await generateCertificate.wait()

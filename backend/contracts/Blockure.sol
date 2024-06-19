@@ -21,6 +21,8 @@ contract Blockure is ERC721, ERC721URIStorage, Ownable {
         address recipient_address;
         address issuer_address;
         uint256 issued_date;
+        string tokenURI;
+        string imageURL;
     }
 
     mapping(bytes32 => Certificate) public certificates;
@@ -38,12 +40,14 @@ contract Blockure is ERC721, ERC721URIStorage, Ownable {
         string memory _recipientName,
         address _recipientAddress,
         address _issuerAddress,
-        uint256 _issuedDate
+        uint256 _issuedDate,
+        string memory _tokenURI,
+        string memory _imageURL
     ) public {
         bytes32 byte_id = stringToBytes32(mintTransactionHash);
         require(certificates[byte_id].issued_date == 0, "Certificate with given transaction hash already exists");
 
-        certificates[byte_id] = Certificate(_recipientName, _recipientAddress, _issuerAddress, _issuedDate);
+        certificates[byte_id] = Certificate(_recipientName, _recipientAddress, _issuerAddress, _issuedDate, _tokenURI, _imageURL);
         emit CertificateGenerated(byte_id);
     }
 
@@ -54,13 +58,15 @@ contract Blockure is ERC721, ERC721URIStorage, Ownable {
         string memory, 
         address, 
         address,
-        uint256
+        uint256,
+        string memory,
+        string memory 
     ) {
         bytes32 byte_id = stringToBytes32(_mintTransactionHash);
         Certificate memory cer = certificates[byte_id];
 
         require(cer.issued_date != 0, "No data exists");
-        return (cer.recipient_name, cer.recipient_address, cer.issuer_address, cer.issued_date);
+        return (cer.recipient_name, cer.recipient_address, cer.issuer_address, cer.issued_date, cer.tokenURI, cer.imageURL);
     }
 
     function safeMint(address to, uint256 tokenId, string memory uri)
