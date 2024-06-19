@@ -1,13 +1,15 @@
 import { Button, Spin, Card, Flex, Form } from "antd"
 import { useState } from "react"
 import { message } from "antd"
+import { Empty } from "antd"
 import axiosClient from "../axios-client"
 import InputText from "./InputText"
 
-const CreateCustomCertificate = () => {
+const VerifyCertificate = () => {
     const [form] = Form.useForm()
     const [messageApi, contextHolder] = message.useMessage()
     const [spinning, setSpinning] = useState<boolean>(false)
+    const [imageUrl, setImageUrl] = useState<string>("")
 
     const submitForm = (values: any) => {
         setSpinning(true)
@@ -20,8 +22,14 @@ const CreateCustomCertificate = () => {
             .post("/certificates/verify", payload)
             .then(({ data }) => {
                 setSpinning(false)
-                message.success(`${data.message}`)
-                console.log("FRONTEND DATA", data)
+                const imageUrl: string = data.data.image_url
+                const ipfsImageUrl = imageUrl.replace(
+                    "https://gateway.pinata.cloud/",
+                    "https://ipfs.io/"
+                )
+                console.log(data)
+                setImageUrl(ipfsImageUrl)
+                message.success("Certificate is blockchain verified!")
             })
             .catch((err) => {
                 const response = err.response
@@ -29,7 +37,8 @@ const CreateCustomCertificate = () => {
                     console.log(response.message())
                 }
                 setSpinning(false)
-                message.success(`${response.message}`)
+                message.error("Invalid certificate hash.")
+                setImageUrl("")
             })
     }
 
@@ -80,14 +89,40 @@ const CreateCustomCertificate = () => {
                             />
 
                             <Button type="primary" htmlType="submit" block>
-                                Create
+                                Verify
                             </Button>
                         </Form>
                     </Card>
+                </Flex>
+                <Flex
+                    justify="center"
+                    align="center"
+                    style={{
+                        height: "34rem",
+                        width: "100%",
+                        border: "1px solid #B7B7B7",
+                        borderRadius: 10,
+                        marginTop: "2rem",
+                    }}
+                >
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt="avatar"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: 10,
+                                objectFit: "contain",
+                            }}
+                        />
+                    ) : (
+                        <Empty description={false} />
+                    )}
                 </Flex>
             </Flex>
         </Flex>
     )
 }
 
-export default CreateCustomCertificate
+export default VerifyCertificate
