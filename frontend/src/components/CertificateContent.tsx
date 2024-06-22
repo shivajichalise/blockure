@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react"
-import { Table, Space, Card } from "antd"
+import { Table, Space, Card, Button } from "antd"
 import type { TableProps } from "antd"
 import { BlockOutlined, EyeFilled, PlusSquareFilled } from "@ant-design/icons"
 import { Link } from "react-router-dom"
@@ -99,9 +99,23 @@ const CertificateContent: FC = () => {
             bordered={false}
             style={{ width: "95%", marginBottom: "2rem" }}
             extra={
-                <Link to="/certificates/create" style={{ fontSize: "1rem" }}>
-                    <PlusSquareFilled />
-                </Link>
+                <Space>
+                    <Link
+                        to="/certificates/create"
+                        style={{ fontSize: "1rem" }}
+                    >
+                        <PlusSquareFilled />
+                    </Link>
+                    <Link to="/certificates/verify">
+                        <Button
+                            size="small"
+                            type="primary"
+                            style={{ fontSize: "0.6rem" }}
+                        >
+                            Verify
+                        </Button>
+                    </Link>
+                </Space>
             }
         >
             <Table columns={columns} dataSource={data} scroll={{ x: 1300 }} />
