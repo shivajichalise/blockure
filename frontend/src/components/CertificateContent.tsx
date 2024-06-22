@@ -41,6 +41,8 @@ const CertificateContent: FC = () => {
             title: "#",
             dataIndex: "key",
             rowScope: "row",
+            fixed: "left",
+            width: 40,
         },
         {
             title: "Issuer",
@@ -70,6 +72,8 @@ const CertificateContent: FC = () => {
         {
             title: "Action",
             key: "action",
+            fixed: "right",
+            width: 80,
             render: (_, record) => (
                 <Space size="middle">
                     <a
@@ -100,7 +104,7 @@ const CertificateContent: FC = () => {
                 </Link>
             }
         >
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={data} scroll={{ x: 1300 }} />
         </Card>
     )
 }
